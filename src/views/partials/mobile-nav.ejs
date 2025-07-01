@@ -1,0 +1,87 @@
+<nav class="navbar fixed-bottom bg-white border-top d-block d-lg-none">
+    <div class="container-fluid">
+        <div class="row w-100 text-center">
+            <div class="col">
+                <a href="/" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                    <i class="bi bi-house fs-5 mb-1"></i>
+                    <small class="text-muted">Home</small>
+                </a>
+            </div>
+            <div class="col">
+                <a href="/songs" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                    <i class="bi bi-music-note-list fs-5 mb-1"></i>
+                    <small class="text-muted">Songs</small>
+                </a>
+            </div>
+            <% if (user) { %>
+                <div class="col">
+                    <a href="/songs/upload" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mb-1" style="width: 32px; height: 32px;">
+                            <i class="bi bi-plus fs-6"></i>
+                        </div>
+                        <small class="text-primary fw-semibold">Upload</small>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/users/dashboard" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                        <i class="bi bi-speedometer2 fs-5 mb-1"></i>
+                        <small class="text-muted">Dashboard</small>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/users/profile" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                        <i class="bi bi-person fs-5 mb-1"></i>
+                        <small class="text-muted">Profile</small>
+                    </a>
+                </div>
+            <% } else { %>
+                <div class="col">
+                    <a href="/auth/login" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-2">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mb-1" style="width: 32px; height: 32px;">
+                            <i class="bi bi-box-arrow-in-right fs-6"></i>
+                        </div>
+                        <small class="text-success fw-semibold">Login</small>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .mobile-nav-item {
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-nav-item:hover {
+        transform: translateY(-2px);
+    }
+    
+    .mobile-nav-item:hover i {
+        color: #0d6efd !important;
+    }
+    
+    .mobile-nav-item:hover small {
+        color: #0d6efd !important;
+    }
+    
+    .mobile-nav-item.active i {
+        color: #0d6efd !important;
+    }
+    
+    .mobile-nav-item.active small {
+        color: #0d6efd !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Add padding to body to account for fixed bottom navbar */
+    body {
+        padding-bottom: 80px;
+    }
+    
+    @media (min-width: 992px) {
+        body {
+            padding-bottom: 0;
+        }
+    }
+</style>

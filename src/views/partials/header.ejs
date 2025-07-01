@@ -1,0 +1,144 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/uploads/images/logo.png" alt="Nawe Ririmba Space Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="object-fit: contain;">
+            <span class="fw-bold">Nawe Ririmba Space</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/songs">Browse Songs</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" data-bs-toggle="dropdown">
+                        Info
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/about">About Us</a></li>
+                        <li><a class="dropdown-item" href="/contact">Contact</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/terms">Terms of Service</a></li>
+                        <li><a class="dropdown-item" href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <ul class="navbar-nav">
+                <!-- Currency Selector -->
+                <li class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-currency-exchange"></i> <span id="currentCurrency"><%= currency.current %></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">
+                            <small class="text-muted">Select Currency</small>
+                        </li>
+                        <li><a class="dropdown-item currency-option <%= currency.current === 'USD' ? 'active' : '' %>" href="#" data-currency="USD">
+                            <i class="bi bi-currency-dollar"></i> US Dollar (USD)
+                            <% if (currency.current !== 'USD') { %><small class="text-muted">- Primary</small><% } %>
+                        </a></li>
+                        <li><a class="dropdown-item currency-option <%= currency.current === 'RWF' ? 'active' : '' %>" href="#" data-currency="RWF">
+                            <i class="bi bi-cash"></i> Rwandan Franc (RWF)
+                            <% if (currency.current !== 'RWF') { %><small class="text-muted">- Local</small><% } %>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item-text">
+                            <small class="text-muted" id="exchange-rate-display">
+                                1 USD = <%= Math.round(currency.rates.USD_to_RWF).toLocaleString() %> RWF
+                            </small>
+                        </li>
+                    </ul>
+                </li>
+                
+                <% if (user) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <%= user.name %>
+                            <% if (user.balance && parseFloat(user.balance || 0) > 0) { %>
+                                <span class="badge bg-success balance-display" data-balance-usd="<%= user.balance %>">
+                                    $<%= parseFloat(user.balance || 0).toFixed(2) %>
+                                </span>
+                            <% } %>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/songs/upload">
+                                <i class="bi bi-cloud-upload"></i> Upload Song
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/users/profile">
+                                <i class="bi bi-person"></i> My Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="/users/profile#earnings">
+                                <i class="bi bi-wallet2"></i> My Wallet
+                            </a></li>
+                            <% if (user.is_admin) { %>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/admin/dashboard">
+                                    <i class="bi bi-gear"></i> Admin Dashboard
+                                </a></li>
+                            <% } %>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/auth/logout">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ms-2" href="/auth/register">
+                            Get Started
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Bottom Navigation -->
+<div class="mobile-nav d-lg-none">
+    <div class="row g-0">
+        <div class="col">
+            <a href="/" class="nav-link text-center">
+                <i class="bi bi-house-fill"></i>
+                <span class="d-block small">Home</span>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/songs" class="nav-link text-center">
+                <i class="bi bi-music-note-list"></i>
+                <span class="d-block small">Songs</span>
+            </a>
+        </div>
+        <% if (user) { %>
+            <div class="col">
+                <a href="/users/dashboard" class="nav-link text-center">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="d-block small">Dashboard</span>
+                </a>
+            </div>
+        <% } else { %>
+            <div class="col">
+                <a href="/auth/login" class="nav-link text-center">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span class="d-block small">Login</span>
+                </a>
+            </div>
+            <div class="col">
+                <a href="/auth/register" class="nav-link text-center">
+                    <i class="bi bi-person-plus"></i>
+                    <span class="d-block small">Register</span>
+                </a>
+            </div>
+        <% } %>
+    </div>
+</div>

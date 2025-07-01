@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BenixSpace AI Music Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Page specific CSS -->
+    
+</head>
+<body>
+    <!-- Header/Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-music me-2"></i>BenixSpace
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dashboard">Dashboard</a>
+                        </li>                        <li class="nav-item">
+                            <a class="nav-link" href="/record">Record Music</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/music-library">My Music</a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>benirabok@gmail.com
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/dashboard">My Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Flash messages -->
+        
+        
+        
+        
+        
+
+
+<head>
+    <!-- ... existing head content ... -->
+    <link rel="stylesheet" href="/css/audioRecorder.css">
+    <link rel="stylesheet" href="/css/customAudioPlayer.css">
+    <link rel="stylesheet" href="/css/mobileNavigation.css">
+    <link rel="stylesheet" href="/css/countdown.css">
+</head>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-3">Studio Recording</h1>
+            
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main recording column -->
+        <div class="col-lg-8">
+            <!-- Song Structure Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Song Structure</h2>
+                    <button class="btn btn-sm btn-light" data-bs-toggle="collapse" data-bs-target="#songStructureContent">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div id="songStructureContent" class="card-body collapse show">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="versesCount">Number of Verses:</label>
+                                <select id="versesCount" class="form-select">
+                                    <option value="1">1 Verse</option>
+                                    <option value="2" selected>2 Verses</option>
+                                    <option value="3">3 Verses</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="chorusCount">Chorus:</label>
+                                <select id="chorusCount" class="form-select">
+                                    <option value="1" selected>1 Chorus</option>
+                                    <option value="2">2 Choruses</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" id="includeBridge" class="form-check-input" checked>
+                                <label for="includeBridge" class="form-check-label">Include Bridge</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="songStructurePreview" class="border p-3 bg-light mb-3">
+                        <strong>Structure:</strong> <span id="structureText">Verse 1 → Chorus → Verse 2 → Chorus → Bridge → Chorus</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recording Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="h5 mb-0">Voice Recording</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="currentSection">Current Section:</label>
+                                <select id="currentSection" class="form-select">
+                                    <option value="verse1">Verse 1</option>
+                                    <option value="chorus">Chorus</option>
+                                    <option value="verse2">Verse 2</option>
+                                    <option value="bridge">Bridge</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Metronome Settings:</label>
+                                <div class="input-group">
+                                    <input type="number" id="bpmInput" class="form-control" value="90" min="40" max="200" placeholder="BPM">
+                                    <select id="timeSignature" class="form-select" style="max-width: 80px;">
+                                        <option value="4/4">4/4</option>
+                                        <option value="3/4">3/4</option>
+                                        <option value="2/4">2/4</option>
+                                    </select>
+                                    <button id="metronomeToggle" class="btn btn-outline-secondary">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <small class="text-muted">The metronome will automatically start with a 4-beat pre-count before recording</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <canvas id="visualizer" height="80" class="w-100 border rounded"></canvas>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mb-3 gap-2">
+                        <button id="recordButton" class="btn btn-danger">
+                            <i class="fas fa-microphone me-1"></i> Record with Count-in
+                        </button>
+                        <button id="pauseButton" class="btn btn-warning" disabled>
+                            <i class="fas fa-pause me-1"></i> Pause
+                        </button>
+                        <button id="stopButton" class="btn btn-secondary" disabled>
+                            <i class="fas fa-stop me-1"></i> Stop
+                        </button>
+                    </div>
+                    
+                    <div id="recordingStatus" class="alert alert-info text-center">Ready to record</div>
+                    
+                    <audio id="audioPreview" class="w-100 mt-3 d-none" controls></audio>
+                </div>
+            </div>
+            
+            <!-- Recorded Sections List -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Recorded Sections</h2>
+                </div>
+                <div class="card-body">
+                    <div id="recordedSections" class="mb-3">
+                        <div class="alert alert-secondary text-center">No sections recorded yet</div>
+                    </div>
+                    
+                    <div id="uploadProgress" class="progress mb-3 d-none">
+                        <div id="uploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right sidebar - Music Generation -->
+        <div class="col-lg-4">
+            <!-- Generate Track Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0">Generate Audio Track</h2>
+                </div>
+                <div class="card-body">
+                    
+                        <div class="form-group mb-3">
+                            <label for="genre">Music Genre:</label>
+                            <select id="genre" class="form-select">
+                                <option value="pop">Pop</option>
+                                <option value="rock">Rock</option>
+                                <option value="hiphop">Hip Hop</option>
+                                <option value="rnb">R&B</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="jazz">Jazz</option>
+                                <option value="acoustic">Acoustic</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="mood">Mood:</label>
+                            <select id="mood" class="form-select">
+                                <option value="happy">Happy</option>
+                                <option value="sad">Sad</option>
+                                <option value="energetic">Energetic</option>
+                                <option value="calm">Calm</option>
+                                <option value="dark">Dark</option>
+                                <option value="uplifting">Uplifting</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="complexity">Instrumental Complexity:</label>
+                            <select id="complexity" class="form-select">
+                                <option value="simple">Simple</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="complex">Complex</option>
+                            </select>
+                        </div>
+                        
+                        <button id="generateTrackBtn" class="btn btn-primary w-100 mb-3" disabled>
+                            <i class="fas fa-magic me-1"></i> Generate Track
+                        </button>
+                        
+                        <div class="generation-status d-none">
+                            <div class="progress mb-2">
+                                <div id="generationProgress" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                            </div>
+                            <p id="generationStatus" class="text-center">Initializing...</p>
+                        </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Final Track Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="h5 mb-0">Final Track</h2>
+                </div>
+                <div class="card-body text-center">
+                    <div id="finalTrackStatus" class="alert alert-secondary">
+                        Complete all recordings and generate music to create your final track
+                    </div>
+                    
+                    <audio id="finalTrack" class="w-100 mb-3 d-none" controls></audio>
+                    
+                    <div class="btn-group d-none" id="finalTrackButtons">
+                        <button id="downloadTrackBtn" class="btn btn-success">
+                            <i class="fas fa-download me-1"></i> Download
+                        </button>
+                        <button id="shareTrackBtn" class="btn btn-info">
+                            <i class="fas fa-share-alt me-1"></i> Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="h5 mb-0">How To Use</h2>
+                </div>
+                <div class="card-body">
+                    <ol class="ps-3 mb-0">
+                        <li class="mb-2">Select your <strong>song structure</strong></li>
+                        <li class="mb-2">Record each section using the <strong>voice recorder</strong></li>
+                        <li class="mb-2">Choose your genre and mood</li>
+                        <li class="mb-2">Click <strong>Generate Track</strong> to create music</li>
+                        <li>Download or share your completed track</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/audioRecorder.js"></script>
+
+</main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <a class="footer-brand d-flex align-items-center mb-3" href="/">
+                        <img src="/images/logo.png" alt="BenixSpace Logo" height="30" class="me-2">
+                        <span>BenixSpace AI</span>
+                    </a>
+                    <p class="mt-2">Transform your vocals into professional music with the power of AI.</p>
+                    <div class="contact-info mt-3">
+                        <p><i class="fas fa-phone-alt me-2"></i> +250783987223</p>
+                        <p><i class="fas fa-envelope me-2"></i> benirabok@gmail.com</p>
+                        <p><i class="fas fa-globe me-2"></i> <a href="https://ai.benix.space" class="text-decoration-none text-light">ai.benix.space</a></p>
+                    </div>
+                    <div class="social-links mt-3">
+                        <a href="#" class="social-link me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link me-2"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mt-4 mt-lg-0">
+                    <h5>Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-decoration-none text-light-hover">Home</a></li>
+                        <li class="mb-2"><a href="/dashboard" class="text-decoration-none text-light-hover">Dashboard</a></li>
+                        <li class="mb-2"><a href="/record" class="text-decoration-none text-light-hover">Record Audio</a></li>
+                        <li class="mb-2"><a href="/music-library" class="text-decoration-none text-light-hover">Music Library</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mt-4 mt-lg-0">
+                    <h5>Account</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/login" class="text-decoration-none text-light-hover">Login</a></li>
+                        <li class="mb-2"><a href="/register" class="text-decoration-none text-light-hover">Register</a></li>
+                        <li class="mb-2"><a href="/profile" class="text-decoration-none text-light-hover">My Profile</a></li>
+                        <li class="mb-2"><a href="/subscription" class="text-decoration-none text-light-hover">Subscription</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mt-4 mt-lg-0">
+                    <h5>Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/terms" class="text-decoration-none text-light-hover">Terms of Service</a></li>
+                        <li class="mb-2"><a href="/privacy" class="text-decoration-none text-light-hover">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/refund" class="text-decoration-none text-light-hover">Refund Policy</a></li>
+                        <li class="mb-2"><a href="/copyright" class="text-decoration-none text-light-hover">Copyright</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mt-4 mt-lg-0">
+                    <h5>Support</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/contact" class="text-decoration-none text-light-hover">Contact Us</a></li>
+                        <li class="mb-2"><a href="/faq" class="text-decoration-none text-light-hover">FAQs</a></li>
+                        <li class="mb-2"><a href="/help" class="text-decoration-none text-light-hover">Help Center</a></li>
+                        <li class="mb-2"><a href="/feedback" class="text-decoration-none text-light-hover">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-md-0">© 2025 BenixSpace AI. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Made with <i class="fas fa-heart text-danger"></i> in Rwanda</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add some footer-specific styles -->
+    <style>
+        .footer {
+            color: #8c98a4;
+        }
+        .footer h5 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .footer a {
+            color: #8c98a4;
+            transition: color 0.2s;
+        }
+        .footer a:hover {
+            color: white;
+        }
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+        .social-link:hover {
+            background-color: #007bff;
+            transform: translateY(-3px);
+        }
+        .text-light-hover:hover {
+            color: white !important;
+        }
+        .footer-brand {
+            color: white;
+            text-decoration: none;
+        }
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+
+    <!-- Bootstrap and other scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</body>
+</html>
+
+
+<!-- Audio Fix Scripts -->
+<script src="/js/audioFix.js"></script>
+<script src="/js/recordButtonFix.js"></script>
+<script src="/js/generateTrackFix.js"></script>
+<!-- Enhanced UI Scripts -->
+<script src="/js/customAudioPlayer.js"></script>
+<script src="/js/recordingCountdown.js"></script>
+<script src="/js/mobileNavigation.js"></script>

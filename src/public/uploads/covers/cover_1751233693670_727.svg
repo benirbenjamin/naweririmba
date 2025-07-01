@@ -1,0 +1,90 @@
+
+        <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                </linearGradient>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="3" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.4)"/>
+                </filter>
+                <filter id="textShadow">
+                    <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.5)"/>
+                </filter>
+                <radialGradient id="lightBurst" cx="50%" cy="30%">
+                    <stop offset="0%" style="stop-color:rgba(255,255,255,0.3);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" />
+                </radialGradient>
+            </defs>
+            
+            <!-- Background -->
+            <rect width="400" height="400" fill="url(#bg)"/>
+            
+            <!-- Light burst -->
+            <ellipse cx="200" cy="120" rx="150" ry="80" fill="url(#lightBurst)"/>
+            
+            <!-- Decorative elements -->
+            <circle cx="350" cy="50" r="25" fill="rgba(255,255,255,0.15)" opacity="0.8"/>
+            <circle cx="50" cy="350" r="35" fill="rgba(255,255,255,0.1)" opacity="0.6"/>
+            <circle cx="320" cy="320" r="20" fill="rgba(255,255,255,0.12)" opacity="0.7"/>
+            <circle cx="80" cy="80" r="18" fill="rgba(255,255,255,0.18)" opacity="0.5"/>
+            
+            <!-- Dove silhouette -->
+            <g transform="translate(320, 80)" opacity="0.4">
+                <path d="M0,0 Q-8,-5 -15,-3 Q-12,0 -8,2 Q-5,5 0,3 Q8,5 12,2 Q15,0 12,-3 Q5,-5 0,0" fill="white"/>
+                <circle cx="-5" cy="-1" r="1" fill="white"/>
+            </g>
+            
+            <!-- Cross with enhanced styling -->
+            <g transform="translate(200, 110)">
+                <rect x="-4" y="-25" width="8" height="50" fill="white" filter="url(#glow)" opacity="0.9"/>
+                <rect x="-20" y="-4" width="40" height="8" fill="white" filter="url(#glow)" opacity="0.9"/>
+                <!-- Inner light on cross -->
+                <rect x="-2" y="-23" width="4" height="46" fill="rgba(255,255,255,0.7)"/>
+                <rect x="-18" y="-2" width="36" height="4" fill="rgba(255,255,255,0.7)"/>
+            </g>
+            
+            <!-- Musical notes with gospel styling -->
+            <g transform="translate(120, 200)" opacity="0.7">
+                <circle cx="0" cy="0" r="10" fill="white" filter="url(#glow)"/>
+                <rect x="8" y="-30" width="3" height="30" fill="white" filter="url(#glow)"/>
+                <path d="M11,-30 Q20,-25 20,-18 Q20,-12 11,-18" fill="white" filter="url(#glow)"/>
+            </g>
+            
+            <g transform="translate(280, 180)" opacity="0.6">
+                <circle cx="0" cy="0" r="8" fill="white" filter="url(#glow)"/>
+                <rect x="6" y="-24" width="2" height="24" fill="white" filter="url(#glow)"/>
+            </g>
+            
+            <!-- Star accents -->
+            <g transform="translate(150, 140)" opacity="0.5">
+                <path d="M0,-8 L2,-2 L8,-2 L3,2 L5,8 L0,4 L-5,8 L-3,2 L-8,-2 L-2,-2 Z" fill="white" filter="url(#glow)"/>
+            </g>
+            
+            <g transform="translate(250, 150)" opacity="0.4">
+                <path d="M0,-6 L1.5,-1.5 L6,-1.5 L2.5,1.5 L4,6 L0,3 L-4,6 L-2.5,1.5 L-6,-1.5 L-1.5,-1.5 Z" fill="white" filter="url(#glow)"/>
+            </g>
+            
+            <!-- Main GOSPEL text with enhanced styling -->
+            <text x="200" y="260" text-anchor="middle" fill="white" font-family="Arial Black, Impact, sans-serif" 
+                  font-size="32" font-weight="900" filter="url(#textShadow)" letter-spacing="2px">GOSPEL</text>
+            
+            <!-- Song title with elegant styling -->
+            <text x="200" y="295" text-anchor="middle" fill="rgba(255,255,255,0.95)" 
+                  font-family="Georgia, serif" font-size="18" font-weight="bold" font-style="italic">Dore ibendera</text>
+            
+            <!-- Decorative lines -->
+            <line x1="80" y1="320" x2="320" y2="320" stroke="rgba(255,255,255,0.6)" stroke-width="2" opacity="0.8"/>
+            <line x1="90" y1="325" x2="310" y2="325" stroke="rgba(255,255,255,0.3)" stroke-width="1" opacity="0.6"/>
+            
+            <!-- Subtitle with blessing -->
+            <text x="200" y="345" text-anchor="middle" fill="rgba(255,255,255,0.8)" 
+                  font-family="Georgia, serif" font-size="14" font-style="italic">✨ Blessed Music ✨</text>
+        </svg>

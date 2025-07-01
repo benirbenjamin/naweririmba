@@ -1,0 +1,783 @@
+<!-- Hero Section with Background -->
+<div class="hero-section">
+    <div class="hero-overlay">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <h1 class="display-3 fw-bold text-white mb-4">
+                        Nawe Ririmba Space
+                    </h1>
+                    <h2 class="h4 text-white-75 mb-4">
+                        Where Unique Songs Find Their Perfect Owners
+                    </h2>
+                    <p class="lead text-white-75 mb-4">
+                        Discover exclusive music that's sold only once. Each song is a unique digital collectible waiting for its perfect owner.
+                    </p>
+                    <% if (typeof user === 'undefined' || !user) { %>
+                        <div class="hero-actions">
+                            <a href="/auth/register" class="btn btn-light btn-lg me-3 px-4">
+                                <i class="bi bi-person-plus"></i> Get Started
+                            </a>
+                            <a href="/auth/login" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </div>
+                    <% } else { %>
+                        <div class="hero-actions">
+                            <a href="/songs/upload" class="btn btn-light btn-lg me-3 px-4">
+                                <i class="bi bi-upload"></i> Upload Your Song
+                            </a>
+                            <a href="/songs" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-music-note-list"></i> Browse Songs
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image text-center">
+                        <div class="image-stack">
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&crop=center" 
+                                 alt="Music Studio" class="img-fluid rounded-circle shadow-lg hero-img-main">
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop&crop=center" 
+                                 alt="Headphones" class="hero-img-floating floating-1">
+                            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=150&h=150&fit=crop&crop=center" 
+                                 alt="Vinyl Record" class="hero-img-floating floating-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section py-5 bg-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-primary">1,247</div>
+                    <div class="stat-label">Songs Uploaded</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-success">892</div>
+                    <div class="stat-label">Songs Sold</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-info">2,341</div>
+                    <div class="stat-label">Happy Users</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-warning">$24,891</div>
+                    <div class="stat-label">Artist Earnings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Songs Section -->
+<div class="featured-songs-section py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Featured Songs</h2>
+                <p class="lead text-muted">Discover unique music from talented artists</p>
+            </div>
+        </div>
+        
+        <% if (typeof songs !== 'undefined' && songs && songs.length > 0) { %>
+            <div class="row g-4">
+                <% songs.forEach(function(song) { %>
+                    <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                        <div class="song-card position-relative">
+                            <!-- Cover Image -->
+                            <div class="song-cover position-relative">
+                                <img src="/songs/<%= song.id %>/cover" 
+                                     class="card-img-top song-cover-img" alt="<%= song.title %>"
+                                     onerror="this.src='https://picsum.photos/400/400?random=<%= song.id %>'">
+                                
+                                <!-- Play Button Overlay -->
+                                <div class="play-overlay">
+                                    <% if (!song.is_sold && song.preview_path) { %>
+                                        <button class="play-btn" 
+                                                onclick="playPreview('<%= song.id %>', '<%= song.title %>', '<%= song.artist_name %>', '<%= song.preview_path %>', '/songs/<%= song.id %>/cover')"
+                                                data-song-id="<%= song.id %>">
+                                            <i class="bi bi-play-fill"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <div class="sold-badge">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>SOLD</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                
+                                <!-- Price Badge -->
+                                <div class="price-badge">
+                                    <% if (!song.is_sold) { %>
+                                        <span class="price-display" data-price-usd="<%= song.price %>">
+                                            $<%= parseFloat(song.price).toFixed(2) %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="sold-price">SOLD</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <!-- Song Info -->
+                            <div class="song-info">
+                                <h5 class="song-title"><%= song.title %></h5>
+                                <p class="song-artist">by <%= song.artist_name %></p>
+                                <div class="song-genre">
+                                    <span class="genre-tag">
+                                        <%= song.genre.replace('_', ' ').replace(/(?:^|\s)\S/g, c => c.toUpperCase()) %>
+                                    </span>
+                                </div>
+                                
+                                <div class="song-actions mt-3">
+                                    <a href="/songs/<%= song.id %>" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                    <% if (!song.is_sold && user) { %>
+                                        <button class="btn btn-primary btn-sm purchase-btn" 
+                                                data-song-id="<%= song.id %>"
+                                                data-price="<%= song.price %>">
+                                            <i class="bi bi-cart-plus"></i> Buy
+                                        </button>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="empty-state text-center py-5">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=200&fit=crop" 
+                     alt="No songs" class="img-fluid mb-4 rounded">
+                <h3>No songs available yet</h3>
+                <p class="text-muted mb-4">Be the first to upload a unique song to our platform!</p>
+                <% if (user) { %>
+                    <a href="/songs/upload" class="btn btn-primary btn-lg">
+                        <i class="bi bi-upload"></i> Upload Your First Song
+                    </a>
+                <% } else { %>
+                    <a href="/auth/register" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> Join to Upload
+                    </a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section py-5 bg-white">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Why Choose Nawe Ririmba?</h2>
+                <p class="lead text-muted">The future of music ownership is here</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop&crop=center" 
+                             alt="Unique Music" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Unique Ownership</h4>
+                    <p class="text-muted">Each song is sold only once, making it truly exclusive to its owner. Own a piece of music history that no one else can have.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop&crop=center" 
+                             alt="High Quality" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Premium Quality</h4>
+                    <p class="text-muted">Experience crystal-clear audio with our high-quality recordings. Every beat, every note delivered in pristine condition.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=100&h=100&fit=crop&crop=center" 
+                             alt="Direct Connection" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Artist Connection</h4>
+                    <p class="text-muted">Connect directly with artists through our platform. Get behind-the-scenes insights and build meaningful relationships.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=center" 
+                             alt="Secure Payments" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Secure Payments</h4>
+                    <p class="text-muted">Safe and secure transactions with Flutterwave integration. Multiple currency support for global accessibility.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=100&h=100&fit=crop&crop=center" 
+                             alt="Easy Upload" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Easy Upload</h4>
+                    <p class="text-muted">Upload your music with our intuitive interface. Professional tools for audio editing and preview creation included.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop&crop=center" 
+                             alt="Global Reach" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Global Reach</h4>
+                    <p class="text-muted">Reach music lovers worldwide. Our platform connects artists and collectors from every corner of the globe.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (typeof user === 'undefined' || !user) { %>
+<!-- Call to Action Section -->
+<div class="cta-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-3">Ready to Start Your Musical Journey?</h2>
+                <p class="lead mb-4">Join thousands of artists and music lovers who have discovered the future of music ownership.</p>
+                <div class="cta-actions">
+                    <a href="/auth/register" class="btn btn-primary btn-lg me-3 px-4">
+                        <i class="bi bi-person-plus"></i> Join Now - It's Free
+                    </a>
+                    <a href="/auth/login" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="bi bi-box-arrow-in-right"></i> Already a Member?
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop" 
+                     alt="Join Us" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<!-- Custom Styles -->
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 80vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop') center/cover;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+    padding: 80px 0;
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-actions .btn {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.hero-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.image-stack {
+    position: relative;
+    display: inline-block;
+}
+
+.hero-img-main {
+    width: 300px;
+    height: 300px;
+    border: 5px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease;
+}
+
+.hero-img-main:hover {
+    transform: scale(1.05);
+}
+
+.hero-img-floating {
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.floating-1 {
+    top: 20px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-2 {
+    bottom: 40px;
+    left: -40px;
+    width: 100px;
+    height: 100px;
+    animation: float 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Stats Section */
+.stats-section {
+    background: #fff;
+}
+
+.stat-item {
+    padding: 20px;
+    transition: transform 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Featured Songs */
+.featured-songs-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Song Card Enhancements */
+.song-cover {
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-card:hover .song-cover-img {
+    transform: scale(1.05);
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-card:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: #333;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.play-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.sold-badge {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.price-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(13, 110, 253, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sold-price {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.song-info {
+    padding: 20px;
+}
+
+.song-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.song-artist {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.genre-tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Features Section */
+.features-section {
+    background: #fff;
+}
+
+.feature-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.feature-img {
+    width: 80px;
+    height: 80px;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-img {
+    transform: scale(1.1);
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.cta-actions .btn {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cta-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-img-main {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .floating-1, .floating-2 {
+        display: none;
+    }
+    
+    .song-cover-img {
+        height: 200px;
+    }
+    
+    .play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}
+</style>
+
+<!-- Fixed Audio Player -->
+<div id="audioPlayer" class="audio-player-fixed">
+    <div class="player-content">
+        <div class="song-info-player">
+            <img id="playerCover" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=50&h=50&fit=crop" 
+                 alt="Album Cover" class="player-cover">
+            <div class="song-details">
+                <div id="playerTitle" class="song-title-player">Select a song to play</div>
+                <div id="playerArtist" class="song-artist-player">Choose from featured songs above</div>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button id="prevBtn" class="control-btn">
+                <i class="bi bi-skip-backward-fill"></i>
+            </button>
+            <button id="playPauseBtn" class="control-btn main-play-btn">
+                <i class="bi bi-play-fill"></i>
+            </button>
+            <button id="nextBtn" class="control-btn">
+                <i class="bi bi-skip-forward-fill"></i>
+            </button>
+        </div>
+        
+        <div class="player-progress">
+            <span id="currentTime" class="time">0:00</span>
+            <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
+            <span id="duration" class="time">0:00</span>
+        </div>
+        
+        <div class="player-volume">
+            <i class="bi bi-volume-up"></i>
+            <input type="range" id="volumeBar" class="volume-bar" min="0" max="100" value="80">
+        </div>
+        
+        <button id="closePlayer" class="close-player">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <audio id="audioElement" preload="metadata"></audio>
+</div>
+
+<script>
+// Global audio player functionality
+class AudioPlayer {
+    constructor() {
+        this.audio = document.getElementById('audioElement');
+        this.playPauseBtn = document.getElementById('playPauseBtn');
+        this.progressBar = document.getElementById('progressBar');
+        this.volumeBar = document.getElementById('volumeBar');
+        this.currentTimeEl = document.getElementById('currentTime');
+        this.durationEl = document.getElementById('duration');
+        this.playerEl = document.getElementById('audioPlayer');
+        this.closeBtn = document.getElementById('closePlayer');
+        
+        this.currentSong = null;
+        this.isPlaying = false;
+        
+        this.init();
+    }
+    
+    init() {
+        // Play/Pause button
+        this.playPauseBtn.addEventListener('click', () => {
+            this.togglePlay();
+        });
+        
+        // Progress bar
+        this.progressBar.addEventListener('input', () => {
+            const time = (this.progressBar.value / 100) * this.audio.duration;
+            this.audio.currentTime = time;
+        });
+        
+        // Volume control
+        this.volumeBar.addEventListener('input', () => {
+            this.audio.volume = this.volumeBar.value / 100;
+        });
+        
+        // Close player
+        this.closeBtn.addEventListener('click', () => {
+            this.closePlayer();
+        });
+        
+        // Audio events
+        this.audio.addEventListener('loadedmetadata', () => {
+            this.durationEl.textContent = this.formatTime(this.audio.duration);
+        });
+        
+        this.audio.addEventListener('timeupdate', () => {
+            if (this.audio.duration) {
+                const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                this.progressBar.value = progress;
+                this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+            }
+        });
+        
+        this.audio.addEventListener('ended', () => {
+            this.isPlaying = false;
+            this.updatePlayButton();
+        });
+        
+        this.audio.addEventListener('play', () => {
+            this.isPlaying = true;
+            this.updatePlayButton();
+        });
+        
+        this.audio.addEventListener('pause', () => {
+            this.isPlaying = false;
+            this.updatePlayButton();
+        });
+        
+        // Set initial volume
+        this.audio.volume = 0.8;
+    }
+    
+    loadSong(songId, title, artist, previewPath, coverUrl) {
+        this.currentSong = { songId, title, artist, previewPath, coverUrl };
+        
+        // Update UI
+        document.getElementById('playerTitle').textContent = title;
+        document.getElementById('playerArtist').textContent = `by ${artist}`;
+        document.getElementById('playerCover').src = coverUrl;
+        
+        // Load audio
+        this.audio.src = previewPath;
+        this.audio.load();
+        
+        // Show player
+        this.playerEl.classList.add('show');
+        
+        // Auto play
+        this.play();
+    }
+    
+    play() {
+        if (this.currentSong) {
+            this.audio.play().catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        }
+    }
+    
+    pause() {
+        this.audio.pause();
+    }
+    
+    togglePlay() {
+        if (this.isPlaying) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    }
+    
+    updatePlayButton() {
+        const icon = this.playPauseBtn.querySelector('i');
+        if (this.isPlaying) {
+            icon.className = 'bi bi-pause-fill';
+        } else {
+            icon.className = 'bi bi-play-fill';
+        }
+    }
+    
+    closePlayer() {
+        this.pause();
+        this.playerEl.classList.remove('show');
+        this.currentSong = null;
+        
+        // Reset UI
+        document.getElementById('playerTitle').textContent = 'Select a song to play';
+        document.getElementById('playerArtist').textContent = 'Choose from featured songs above';
+        document.getElementById('playerCover').src = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=50&h=50&fit=crop';
+        this.progressBar.value = 0;
+        this.currentTimeEl.textContent = '0:00';
+        this.durationEl.textContent = '0:00';
+    }
+    
+    formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+}
+
+// Initialize audio player
+const audioPlayer = new AudioPlayer();
+
+// Global function to play preview (called from song cards)
+function playPreview(songId, title, artist, previewPath, coverUrl) {
+    audioPlayer.loadSong(songId, title, artist, previewPath, coverUrl);
+}
+</script>

@@ -1,0 +1,122 @@
+<%- include('../layouts/main') %>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <!-- Error Icon -->
+                    <div class="error-icon mb-4">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h1 class="h2 text-danger mb-3">Payment Failed</h1>
+                    <p class="lead text-muted mb-4">
+                        We're sorry, but your payment could not be processed.
+                    </p>
+                    
+                    <!-- Error Details -->
+                    <div class="error-details bg-light rounded p-4 mb-4">
+                        <h5 class="mb-3">What happened?</h5>
+                        <p class="text-muted mb-0">
+                            <% if (reason === 'verification_failed') { %>
+                                Payment verification failed. Please try again or contact support.
+                            <% } else if (reason === 'payment_failed') { %>
+                                The payment was not completed. This could be due to insufficient funds, card issues, or network problems.
+                            <% } else if (reason === 'transaction_not_found') { %>
+                                We couldn't find your transaction. Please try purchasing again.
+                            <% } else if (reason === 'system_error') { %>
+                                A system error occurred. Please try again later or contact support.
+                            <% } else { %>
+                                An unexpected error occurred during payment processing.
+                            <% } %>
+                        </p>
+                        
+                        <% if (tx_ref) { %>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Reference: <%= tx_ref %>
+                                </small>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Next Steps -->
+                    <div class="next-steps text-start mb-4">
+                        <h5 class="mb-3">What can you do next?</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right text-primary me-2"></i>
+                                Check your payment method and try again
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right text-primary me-2"></i>
+                                Ensure you have sufficient funds
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right text-primary me-2"></i>
+                                Try a different payment method
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right text-primary me-2"></i>
+                                Contact our support team if the issue persists
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Support Info -->
+                    <div class="support-info bg-info bg-opacity-10 rounded p-3 mb-4">
+                        <h6 class="text-info mb-2">
+                            <i class="bi bi-headset"></i> Need Help?
+                        </h6>
+                        <p class="small mb-0">
+                            Contact our support team via WhatsApp or email for assistance with your payment.
+                        </p>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="mt-4">
+                        <button onclick="history.back()" class="btn btn-primary me-3">
+                            <i class="bi bi-arrow-left"></i> Try Again
+                        </button>
+                        <a href="/" class="btn btn-outline-secondary me-3">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                        <a href="/songs" class="btn btn-outline-primary">
+                            <i class="bi bi-music-note-list"></i> Browse Songs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-icon {
+    animation: errorShake 0.8s ease-in-out;
+}
+
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.error-details {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-left: 4px solid #e53e3e;
+}
+
+.next-steps ul li {
+    padding: 5px 0;
+}
+</style>
+
+<%- include('../layouts/main') %>

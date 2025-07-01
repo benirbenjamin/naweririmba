@@ -1,0 +1,105 @@
+
+        <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#434343;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+                </linearGradient>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="3" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.4)"/>
+                </filter>
+                <filter id="textShadow">
+                    <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.6)"/>
+                </filter>
+                <radialGradient id="spotlight" cx="50%" cy="30%">
+                    <stop offset="0%" style="stop-color:rgba(255,255,255,0.2);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" />
+                </radialGradient>
+            </defs>
+            
+            <!-- Background -->
+            <rect width="400" height="400" fill="url(#bg)"/>
+            
+            <!-- Spotlight effect -->
+            <ellipse cx="200" cy="120" rx="180" ry="100" fill="url(#spotlight)"/>
+            
+            <!-- Decorative circles with depth -->
+            <circle cx="80" cy="80" r="30" fill="rgba(255,255,255,0.15)" opacity="0.8"/>
+            <circle cx="320" cy="320" r="40" fill="rgba(255,255,255,0.1)" opacity="0.6"/>
+            <circle cx="350" cy="100" r="25" fill="rgba(255,255,255,0.18)" opacity="0.7"/>
+            <circle cx="50" cy="300" r="35" fill="rgba(255,255,255,0.12)" opacity="0.5"/>
+            
+            <!-- Enhanced waveform visualization -->
+            <g transform="translate(0, 200)" opacity="0.4">
+                <rect x="50" y="-15" width="5" height="30" fill="#fff" rx="2"/>
+                <rect x="60" y="-22" width="5" height="44" fill="#fff" rx="2"/>
+                <rect x="70" y="-10" width="5" height="20" fill="#fff" rx="2"/>
+                <rect x="80" y="-28" width="5" height="56" fill="#fff" rx="2"/>
+                <rect x="90" y="-18" width="5" height="36" fill="#fff" rx="2"/>
+                <rect x="100" y="-25" width="5" height="50" fill="#fff" rx="2"/>
+                <rect x="110" y="-8" width="5" height="16" fill="#fff" rx="2"/>
+                <rect x="120" y="-20" width="5" height="40" fill="#fff" rx="2"/>
+                
+                <rect x="280" y="-18" width="5" height="36" fill="#fff" rx="2"/>
+                <rect x="290" y="-25" width="5" height="50" fill="#fff" rx="2"/>
+                <rect x="300" y="-12" width="5" height="24" fill="#fff" rx="2"/>
+                <rect x="310" y="-22" width="5" height="44" fill="#fff" rx="2"/>
+                <rect x="320" y="-15" width="5" height="30" fill="#fff" rx="2"/>
+                <rect x="330" y="-30" width="5" height="60" fill="#fff" rx="2"/>
+                <rect x="340" y="-20" width="5" height="40" fill="#fff" rx="2"/>
+                <rect x="350" y="-12" width="5" height="24" fill="#fff" rx="2"/>
+            </g>
+            
+            <!-- Central icon based on genre -->
+            <g transform="translate(200, 130) scale(1.5)" fill="#fff" opacity="0.8" filter="url(#glow)">
+                <path d="M11,21H5L13,3H7L9,1H15L7,19H13L11,21Z"/>
+            </g>
+            
+            <!-- Musical notes scattered -->
+            <g transform="translate(150, 120)" opacity="0.6">
+                <circle cx="0" cy="0" r="10" fill="#fff" filter="url(#glow)"/>
+                <rect x="8" y="-30" width="3" height="30" fill="#fff" filter="url(#glow)"/>
+                <path d="M11,-30 Q18,-25 18,-18 Q18,-12 11,-18" fill="#fff" filter="url(#glow)"/>
+            </g>
+            
+            <g transform="translate(250, 140)" opacity="0.5">
+                <circle cx="0" cy="0" r="8" fill="#fff" filter="url(#glow)"/>
+                <rect x="6" y="-24" width="2" height="24" fill="#fff" filter="url(#glow)"/>
+            </g>
+            
+            <!-- Genre/Style text with dynamic styling -->
+            <text x="200" y="260" text-anchor="middle" fill="#fff" font-family="Arial Black, Impact, sans-serif" 
+                  font-size="28" font-weight="900" filter="url(#textShadow)" letter-spacing="1px">SECULAR</text>
+            
+            <!-- Song title with elegant styling -->
+            <text x="200" y="295" text-anchor="middle" fill="rgba(255,255,255,0.95)" 
+                  font-family="Arial, sans-serif" font-size="18" font-weight="bold">HHHHH</text>
+            
+            <!-- Decorative lines with style -->
+            <line x1="80" y1="320" x2="320" y2="320" stroke="#fff" stroke-width="2" opacity="0.6"/>
+            <line x1="90" y1="325" x2="310" y2="325" stroke="#fff" stroke-width="1" opacity="0.4"/>
+            
+            <!-- Dynamic subtitle -->
+            <text x="200" y="345" text-anchor="middle" fill="rgba(255,255,255,0.8)" 
+                  font-family="Arial, sans-serif" font-size="14" font-weight="500">Rock Sound</text>
+                  
+            <!-- Corner accent elements -->
+            <g transform="translate(30, 30)" opacity="0.3">
+                <circle cx="0" cy="0" r="3" fill="#fff"/>
+                <circle cx="15" cy="0" r="2" fill="#fff"/>
+                <circle cx="0" cy="15" r="2" fill="#fff"/>
+            </g>
+            
+            <g transform="translate(370, 370)" opacity="0.3">
+                <circle cx="0" cy="0" r="3" fill="#fff"/>
+                <circle cx="-15" cy="0" r="2" fill="#fff"/>
+                <circle cx="0" cy="-15" r="2" fill="#fff"/>
+            </g>
+        </svg>
