@@ -1,0 +1,180 @@
+const bcrypt = require('bcryptjs');
+const db = require('../models/db');
+
+// Show login form
+exports.showLogin = (req, res) => {
+    res.render('auth/login', { 
+        title: 'Login',
+        error: null 
+    });
+};
+
+// Show registration form
+exports.showRegister = (req, res) => {
+    res.render('auth/register', { 
+        title: 'Register',
+        error: null
+    });
+};
+
+// Handle login
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Input validation
+        if (!email || !password) {
+            return res.render('auth/login', { 
+                title: 'Login',
+                error: 'All fields are required'
+            });
+        }
+
+        // Get connection from pool
+        const pool = await db.getPool();
+        
+        // Find user
+        const [users] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
+        const user = users[0];
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.render('auth/login', {
+                title: 'Login',
+                error: 'Invalid email or password'
+            });
+        }
+
+        // Set user session
+        req.session.user = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            whatsapp: user.whatsapp,
+            isAdmin: user.is_admin
+        };
+
+        res.redirect('/');
+    } catch (error) {
+        console.error('Login error:', error);
+        res.render('auth/login', {
+            title: 'Login',
+            error: 'An error occurred during login'
+        });
+    }
+};
+
+// Handle registration
+exports.register = async (req, res) => {
+    try {
+        const { name, email, password, confirmPassword, phoneNumber } = req.body;
+
+        // Input validation
+        if (!name || !email || !password || !confirmPassword || !phoneNumber) {
+            return res.render('auth/register', {
+                title: 'Register',
+                error: 'All fields are required'
+            });
+        }
+
+        if (password !== confirmPassword) {
+            return res.render('auth/register', {
+                title: 'Register',
+                error: 'Passwords do not match'
+            });
+        }
+
+        // Validate phone number format
+        const phoneRegex = /^[0-9]{10,}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            return res.render('auth/register', {
+                title: 'Register',
+                error: 'Please enter a valid phone number (minimum 10 digits)'
+            });
+        }
+
+        // Get connection from pool
+        const pool = await db.getPool();
+
+        // Check if email already exists
+        const [existingUsers] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+        if (existingUsers.length > 0) {
+            return res.render('auth/register', {
+                title: 'Register',
+                error: 'Email already registered'
+            });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Generate referral code
+        const referralCode = 'NRS' + Date.now().toString(36).toUpperCase();
+
+        // Insert new user
+        const [result] = await pool.execute(
+            'INSERT INTO users (name, email, password, whatsapp, referral_code) VALUES (?, ?, ?, ?, ?)',
+            [name, email, hashedPassword, phoneNumber, referralCode]
+        );
+
+        // Set user session
+        req.session.user = {
+            id: result.insertId,
+            name: name,
+            email: email,
+            whatsapp: phoneNumber,
+            is_admin: false,
+            balance: 0
+        };
+
+        // Redirect to home page
+        res.redirect('/?success=registration_successful');
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.render('auth/register', {
+            title: 'Register',
+            error: 'An error occurred during registration. Please try again.'
+        });
+    }
+};
+            return res.render('auth/register', {
+                title: 'Register',
+                error: 'Email already registered'
+            });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert new user
+        const [result] = await pool.execute(
+            'INSERT INTO users (name, email, password, whatsapp) VALUES (?, ?, ?, ?)',
+            [name, email, hashedPassword, phoneNumber]
+        );
+
+        // Set user session
+        req.session.user = {
+            id: result.insertId,
+            name: name,
+            email: email
+        };
+
+        // Redirect to home page
+        res.redirect('/');
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.render('auth/register', {
+            title: 'Register',
+            error: 'An error occurred during registration'
+        });
+    }
+};
+
+// Handle logout
+exports.logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Logout error:', err);
+        }
+        res.redirect('/login');
+    });
+};

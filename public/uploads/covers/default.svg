@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect width="300" height="300" fill="#f8f9fa"/>
+  <g transform="translate(150, 150)">
+    <circle cx="0" cy="0" r="40" fill="#6c757d" opacity="0.3"/>
+    <path d="M-20 -10 L-20 10 L20 0 Z" fill="#6c757d"/>
+  </g>
+  <text x="150" y="220" text-anchor="middle" fill="#6c757d" font-family="Arial, sans-serif" font-size="14">No Cover Available</text>
+</svg>

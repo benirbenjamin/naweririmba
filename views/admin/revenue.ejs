@@ -1,0 +1,361 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Revenue Report</h1>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-3">
+                        <i class="bi bi-currency-exchange"></i> 
+                        Currency: <span id="currentCurrency">USD</span>
+                    </span>
+                    <div class="btn-group me-3" role="group" aria-label="Currency">
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="USD">USD</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="RWF">RWF</button>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/admin/dashboard">Admin Dashboard</a></li>
+                            <li class="breadcrumb-item active">Revenue Report</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" action="/admin/revenue" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" value="<%= startDate %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" value="<%= endDate %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Filter
+                                </button>
+                                <a href="/admin/revenue" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Revenue Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Transactions</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.total_transactions %></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-receipt fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Revenue</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 price-display" data-price-usd="<%= stats.total_revenue || 0 %>">$<%= parseFloat(stats.total_revenue || 0).toFixed(2) %></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Platform Commission</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 price-display" data-price-usd="<%= stats.total_commission || 0 %>">$<%= parseFloat(stats.total_commission || 0).toFixed(2) %></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-percent fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Avg Transaction</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 price-display" data-price-usd="<%= stats.avg_transaction_amount || 0 %>">$<%= parseFloat(stats.avg_transaction_amount || 0).toFixed(2) %></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-calculator fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs" id="revenueTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab">
+                        Daily Revenue
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="top-songs-tab" data-bs-toggle="tab" data-bs-target="#top-songs" type="button" role="tab">
+                        Top Songs
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="top-sellers-tab" data-bs-toggle="tab" data-bs-target="#top-sellers" type="button" role="tab">
+                        Top Sellers
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="revenueTabContent">
+                <!-- Daily Revenue Tab -->
+                <div class="tab-pane fade show active" id="daily" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Daily Revenue Breakdown</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Transactions</th>
+                                            <th>Total Revenue</th>
+                                            <th>Commission Earned</th>
+                                            <th>Seller Earnings</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (dailyRevenue && dailyRevenue.length > 0) { %>
+                                            <% dailyRevenue.forEach(day => { %>
+                                                <tr>
+                                                    <td><%= new Date(day.date).toLocaleDateString() %></td>
+                                                    <td><%= day.transactions %></td>
+                                                    <td><span class="price-display" data-price-usd="<%= day.total_amount || 0 %>">$<%= parseFloat(day.total_amount || 0).toFixed(2) %></span></td>
+                                                    <td><span class="price-display" data-price-usd="<%= day.commission_earned || 0 %>">$<%= parseFloat(day.commission_earned || 0).toFixed(2) %></span></td>
+                                                    <td><span class="price-display" data-price-usd="<%= (day.total_amount || 0) - (day.commission_earned || 0) %>">$<%= parseFloat((day.total_amount || 0) - (day.commission_earned || 0)).toFixed(2) %></span></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5" class="text-center">No revenue data found for this period</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Songs Tab -->
+                <div class="tab-pane fade" id="top-songs" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Top Selling Songs</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Song Title</th>
+                                            <th>Genre</th>
+                                            <th>Style</th>
+                                            <th>Seller</th>
+                                            <th>Sales Count</th>
+                                            <th>Total Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (topSongs && topSongs.length > 0) { %>
+                                            <% topSongs.forEach(song => { %>
+                                                <tr>
+                                                    <td><%= song.title %></td>
+                                                    <td><%= song.genre %></td>
+                                                    <td><%= song.style %></td>
+                                                    <td><%= song.seller_name %></td>
+                                                    <td><%= song.sales_count %></td>
+                                                    <td><span class="price-display" data-price-usd="<%= song.total_revenue || 0 %>">$<%= parseFloat(song.total_revenue || 0).toFixed(2) %></span></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No song sales data found for this period</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Sellers Tab -->
+                <div class="tab-pane fade" id="top-sellers" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Top Selling Artists</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Seller Name</th>
+                                            <th>Sales Count</th>
+                                            <th>Total Revenue</th>
+                                            <th>Seller Earnings</th>
+                                            <th>Platform Commission</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (topSellers && topSellers.length > 0) { %>
+                                            <% topSellers.forEach(seller => { %>
+                                                <tr>
+                                                    <td><%= seller.seller_name %></td>
+                                                    <td><%= seller.sales_count %></td>
+                                                    <td><span class="price-display" data-price-usd="<%= seller.total_revenue || 0 %>">$<%= parseFloat(seller.total_revenue || 0).toFixed(2) %></span></td>
+                                                    <td><span class="price-display" data-price-usd="<%= seller.seller_earnings || 0 %>">$<%= parseFloat(seller.seller_earnings || 0).toFixed(2) %></span></td>
+                                                    <td><span class="price-display" data-price-usd="<%= (seller.total_revenue || 0) - (seller.seller_earnings || 0) %>">$<%= parseFloat((seller.total_revenue || 0) - (seller.seller_earnings || 0)).toFixed(2) %></span></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5" class="text-center">No seller data found for this period</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h6 class="m-0">Export Options</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>Export revenue data for external analysis:</p>
+                            <div class="d-flex gap-2">
+                                <a href="/admin/revenue?format=json&startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-outline-primary">
+                                    <i class="bi bi-download"></i> Export as JSON
+                                </a>
+                                <button onclick="exportToCSV()" class="btn btn-outline-success">
+                                    <i class="bi bi-filetype-csv"></i> Export as CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>Date range: <strong><%= startDate %></strong> to <strong><%= endDate %></strong></p>
+                            <p>Total transactions: <strong><%= stats.total_transactions %></strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportToCSV() {
+    const startDate = '<%= startDate %>';
+    const endDate = '<%= endDate %>';
+    
+    // Get data from the table
+    const table = document.querySelector('#daily .table tbody');
+    const rows = table.querySelectorAll('tr');
+    
+    // Create CSV content
+    let csvContent = "Date,Transactions,Total Revenue,Commission Earned,Seller Earnings\n";
+    
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 5 && !cells[0].textContent.includes('No revenue data')) {
+            const date = cells[0].textContent.trim();
+            const transactions = cells[1].textContent.trim();
+            const totalRevenue = cells[2].textContent.trim().replace(/[$,]/g, '');
+            const commission = cells[3].textContent.trim().replace(/[$,]/g, '');
+            const sellerEarnings = cells[4].textContent.trim().replace(/[$,]/g, '');
+            
+            csvContent += `${date},${transactions},${totalRevenue},${commission},${sellerEarnings}\n`;
+        }
+    });
+    
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `revenue_report_${startDate}_to_${endDate}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Initialize revenue page currency display
+document.addEventListener('DOMContentLoaded', function() {
+    // Update currency display when page loads
+    if (typeof window.currencyUtils !== 'undefined') {
+        setTimeout(function() {
+            window.currencyUtils.updateCurrencyDisplay();
+        }, 100);
+    }
+    
+    // Listen for currency changes
+    window.addEventListener('currencyChanged', function(e) {
+        console.log('Currency changed to:', e.detail.currency);
+        // The updateCurrencyDisplay function from main.ejs will handle the update
+    });
+});
+</script>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+</style>

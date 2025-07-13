@@ -1,0 +1,379 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Admin Dashboard</h1>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-3">
+                        <i class="bi bi-currency-exchange"></i> 
+                        Currency: <span id="currentCurrency">USD</span>
+                    </span>
+                    <div class="btn-group me-3" role="group" aria-label="Currency">
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option active" data-currency="USD">USD</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="RWF">RWF</button>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active">Admin Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    Settings updated successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.total_users %></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-people fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Songs</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= stats.total_songs %> (<%= stats.sold_songs %> sold)
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-music-note-beamed fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Revenue</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 price-display" 
+                                         data-price-usd="<%= parseFloat(stats.total_revenue || 0).toFixed(2) %>">
+                                        $<%= parseFloat(stats.total_revenue || 0).toFixed(2) %>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Commission Earned</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 price-display" 
+                                         data-price-usd="<%= parseFloat(stats.total_commission || 0).toFixed(2) %>">
+                                        $<%= parseFloat(stats.total_commission || 0).toFixed(2) %>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-graph-up fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab">
+                        Recent Transactions
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="withdrawals-tab" data-bs-toggle="tab" data-bs-target="#withdrawals" type="button" role="tab">
+                        Pending Withdrawals <span class="badge bg-danger"><%= stats.pending_withdrawals %></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                        Settings
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="adminTabContent">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row mt-4">
+                        <div class="col-lg-6">
+                            <div class="card shadow">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="m-0">Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <a href="/admin/users" class="btn btn-outline-primary">
+                                            <i class="bi bi-people"></i> Manage Users
+                                        </a>
+                                        <a href="/admin/songs" class="btn btn-outline-info">
+                                            <i class="bi bi-music-note"></i> Manage Songs
+                                        </a>
+                                        <a href="/admin/transactions" class="btn btn-outline-success">
+                                            <i class="bi bi-receipt"></i> View All Transactions
+                                        </a>
+                                        <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                                            <i class="bi bi-gear"></i> Update Settings
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card shadow">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="m-0">Platform Health</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="progress mb-3">
+                                        <% const salesRate = stats.total_songs > 0 ? (stats.sold_songs / stats.total_songs * 100).toFixed(1) : 0; %>
+                                        <div class="progress-bar bg-success" style="width: <%= salesRate %>%">
+                                            Sales Rate: <%= salesRate %>%
+                                        </div>
+                                    </div>
+                                    <ul class="list-unstyled">
+                                        <li><strong>Commission Rate:</strong> <%= settings.commission_rate %>%</li>
+                                        <li><strong>Referral Rate:</strong> <%= settings.referral_rate %>%</li>
+                                        <li><strong>Available Songs:</strong> <%= stats.total_songs - stats.sold_songs %></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions Tab -->
+                <div class="tab-pane fade" id="transactions" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Recent Transactions</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Song</th>
+                                            <th>Seller</th>
+                                            <th>Amount</th>
+                                            <th>Commission</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (recentTransactions && recentTransactions.length > 0) { %>
+                                            <% recentTransactions.forEach(transaction => { %>
+                                                <tr>
+                                                    <td><%= new Date(transaction.created_at).toLocaleDateString() %></td>
+                                                    <td><%= transaction.song_title %></td>
+                                                    <td><%= transaction.seller_name %></td>
+                                                    <td>
+                                                        <span class="price-display" 
+                                                              data-price-usd="<%= parseFloat(transaction.amount || 0).toFixed(2) %>">
+                                                            $<%= parseFloat(transaction.amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="price-display" 
+                                                              data-price-usd="<%= parseFloat(transaction.commission_amount || 0).toFixed(2) %>">
+                                                            $<%= parseFloat(transaction.commission_amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success">Completed</span>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No transactions found</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Withdrawals Tab -->
+                <div class="tab-pane fade" id="withdrawals" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Pending Withdrawals</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>User</th>
+                                            <th>Amount</th>
+                                            <th>WhatsApp</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (pendingWithdrawals && pendingWithdrawals.length > 0) { %>
+                                            <% pendingWithdrawals.forEach(withdrawal => { %>
+                                                <tr>
+                                                    <td><%= new Date(withdrawal.created_at).toLocaleDateString() %></td>
+                                                    <td>
+                                                        <%= withdrawal.user_name %><br>
+                                                        <small class="text-muted"><%= withdrawal.email %></small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="price-display" 
+                                                              data-price-usd="<%= parseFloat(withdrawal.amount || 0).toFixed(2) %>">
+                                                            $<%= parseFloat(withdrawal.amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td><%= withdrawal.whatsapp_number %></td>
+                                                    <td>
+                                                        <button class="btn btn-success btn-sm" onclick="processWithdrawal('<%= withdrawal.id %>', 'approve')">
+                                                            Approve
+                                                        </button>
+                                                        <button class="btn btn-danger btn-sm" onclick="processWithdrawal('<%= withdrawal.id %>', 'reject')">
+                                                            Reject
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5" class="text-center">No pending withdrawals</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <div class="card shadow mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Platform Settings</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/settings" method="POST">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Commission Rate (%)</label>
+                                            <input type="number" class="form-control" name="commission_rate" 
+                                                   value="<%= settings.commission_rate %>" step="0.01" min="0" max="100" required>
+                                            <small class="form-text text-muted">Platform commission from each sale</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Referral Rate (%)</label>
+                                            <input type="number" class="form-control" name="referral_rate" 
+                                                   value="<%= settings.referral_rate %>" step="0.01" min="0" max="100" required>
+                                            <small class="form-text text-muted">Commission for user referrals</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function processWithdrawal(withdrawalId, action) {
+    const notes = prompt(`${action === 'approve' ? 'Approve' : 'Reject'} withdrawal - Add notes (optional):`);
+    
+    if (notes === null) return; // User cancelled
+    
+    fetch(`/admin/withdrawals/${withdrawalId}/process`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            action: action,
+            admin_notes: notes
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+}
+</script>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+</style>

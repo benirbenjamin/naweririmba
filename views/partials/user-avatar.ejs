@@ -1,0 +1,13 @@
+<%# 
+  User Avatar Partial
+  Usage: <%- include('partials/user-avatar', { user: user, size: 'sm' }) %>
+  Sizes: 'sm', 'md', 'lg', or leave empty for default
+%>
+<% 
+  const initials = user.name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().slice(0, 2);
+  const colorIndex = user.name.charCodeAt(0) % 9;
+  const sizeClass = locals.size ? `avatar-${locals.size}` : '';
+%>
+<div class="profile-avatar <%= sizeClass %> profile-avatar-<%= colorIndex %>">
+  <%= initials %>
+</div>

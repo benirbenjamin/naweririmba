@@ -1,0 +1,294 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <%- include('../partials/admin-sidebar') %>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="bi bi-download me-2"></i>Data Export
+                </h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i>
+                            Export Options
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/export/users">CSV Export</a></li>
+                            <li><a class="dropdown-item" href="/admin/export-users">Excel Export</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <% if (error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <!-- Export Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title text-primary">Users</h5>
+                                    <h3 class="mb-0"><%= stats.users %></h3>
+                                    <small class="text-muted">Total registered users</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-people-fill fs-2 text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title text-success">Songs</h5>
+                                    <h3 class="mb-0"><%= stats.songs %></h3>
+                                    <small class="text-muted">Total songs uploaded</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-music-note-beamed fs-2 text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title text-warning">Transactions</h5>
+                                    <h3 class="mb-0"><%= stats.transactions %></h3>
+                                    <small class="text-muted">Total transactions</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-receipt fs-2 text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card border-info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title text-info">Withdrawals</h5>
+                                    <h3 class="mb-0"><%= stats.withdrawals %></h3>
+                                    <small class="text-muted">Total withdrawal requests</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-wallet2 fs-2 text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-people me-2"></i>
+                                User Data Export
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Export complete user data including profile information, balances, and activity statistics.</p>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>User profiles and contact info</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Account balances and earnings</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Song upload and sales statistics</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Referral information</li>
+                            </ul>
+                            <div class="d-grid gap-2">
+                                <a href="/admin/export/users" class="btn btn-primary">
+                                    <i class="bi bi-download me-2"></i>Export as CSV
+                                </a>
+                                <a href="/admin/export-users" class="btn btn-success">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Export as Excel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-receipt me-2"></i>
+                                Transaction Data Export
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Export detailed transaction records including sales, purchases, and financial data.</p>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Complete transaction history</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Payment details and status</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Commission calculations</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Currency conversion data</li>
+                            </ul>
+                            <div class="d-grid gap-2">
+                                <a href="/admin/export/transactions" class="btn btn-primary">
+                                    <i class="bi bi-download me-2"></i>Export as CSV
+                                </a>
+                                <button class="btn btn-success" onclick="exportTransactionsExcel()">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Export as Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-music-note-beamed me-2"></i>
+                                Song Data Export
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Export complete song catalog with metadata, artist information, and sales status.</p>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Song metadata and details</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Artist information</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Sales status and dates</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Genre and style classification</li>
+                            </ul>
+                            <div class="d-grid gap-2">
+                                <a href="/admin/export/songs" class="btn btn-primary">
+                                    <i class="bi bi-download me-2"></i>Export as CSV
+                                </a>
+                                <button class="btn btn-success" onclick="exportSongsExcel()">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Export as Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-wallet2 me-2"></i>
+                                Withdrawal Data Export
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Export withdrawal requests and payment processing data for financial records.</p>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Withdrawal requests and status</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Payment account details</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Processing dates and notes</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Amount and currency data</li>
+                            </ul>
+                            <div class="d-grid gap-2">
+                                <a href="/admin/export/withdrawals" class="btn btn-primary">
+                                    <i class="bi bi-download me-2"></i>Export as CSV
+                                </a>
+                                <a href="/admin/export-withdrawals" class="btn btn-success">
+                                    <i class="bi bi-file-earmark-excel me-2"></i>Export as Excel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Guidelines -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Export Guidelines
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>CSV Format:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check text-success me-2"></i>Lightweight and fast</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Compatible with spreadsheet apps</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Easy to import into other systems</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Excel Format:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check text-success me-2"></i>Rich formatting and styling</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Multiple sheets support</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Advanced data analysis features</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Note:</strong> Large exports may take some time to process. Please be patient while the data is being prepared.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+// Export functions for data that doesn't have direct routes yet
+async function exportTransactionsExcel() {
+    try {
+        const response = await fetch('/admin/export/transactions');
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `transactions_export_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Export failed:', error);
+        alert('Export failed. Please try again.');
+    }
+}
+
+async function exportSongsExcel() {
+    try {
+        const response = await fetch('/admin/export/songs');
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `songs_export_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Export failed:', error);
+        alert('Export failed. Please try again.');
+    }
+}
+</script>

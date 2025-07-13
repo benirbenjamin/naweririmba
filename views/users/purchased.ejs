@@ -1,0 +1,246 @@
+<div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-music-note-beamed me-2"></i>My Purchased Songs</h2>
+                <span class="badge bg-primary fs-6">
+                    <%= purchasedSongs.length %> Song<%= purchasedSongs.length !== 1 ? 's' : '' %> Owned
+                </span>
+            </div>
+
+            <% if (error) { %>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle me-2"></i><%= error %>
+                </div>
+            <% } %>
+
+            <% if (purchasedSongs && purchasedSongs.length > 0) { %>
+                <div class="row">
+                    <% purchasedSongs.forEach(song => { %>
+                        <div class="col-lg-6 col-xl-4 mb-4">
+                            <div class="card h-100 shadow-sm purchased-song-card">
+                                <!-- Song Cover -->
+                                <div class="position-relative">
+                                    <% if (song.cover_image) { %>
+                                        <img src="/uploads/covers/<%= song.cover_image %>" 
+                                             class="card-img-top" 
+                                             alt="<%= song.title %>"
+                                             style="height: 200px; object-fit: cover;">
+                                    <% } else { %>
+                                        <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center" 
+                                             style="height: 200px;">
+                                            <i class="bi bi-music-note-beamed text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Purchased Badge -->
+                                    <span class="position-absolute top-0 end-0 m-2 badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Owned
+                                    </span>
+                                </div>
+
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Song Info -->
+                                    <div class="mb-3">
+                                        <h5 class="card-title mb-2"><%= song.title %></h5>
+                                        <p class="text-muted mb-1">
+                                            <i class="bi bi-person me-1"></i>by <%= song.artist_name %>
+                                        </p>
+                                        <div class="d-flex flex-wrap gap-1 mb-2">
+                                            <span class="badge bg-light text-dark">
+                                                <%= song.style.charAt(0).toUpperCase() + song.style.slice(1) %>
+                                            </span>
+                                            <span class="badge bg-outline-secondary">
+                                                <%= song.genre.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                            </span>
+                                            <% if (song.tempo) { %>
+                                                <span class="badge bg-outline-info">
+                                                    <%= song.tempo %> BPM
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar me-1"></i>
+                                            Purchased: <%= new Date(song.purchase_date).toLocaleDateString() %>
+                                        </small>
+                                    </div>
+
+                                    <!-- Purchase Details -->
+                                    <div class="mb-3 p-2 bg-light rounded">
+                                        <div class="row g-2 text-center">
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Paid</small>
+                                                <strong class="price-display" data-price-usd="<%= song.amount %>">
+                                                    $<%= parseFloat(song.amount).toFixed(2) %>
+                                                </strong>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Downloads</small>
+                                                <strong><%= song.download_count || 0 %></strong>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Lyrics PDF</small>
+                                                <strong><%= song.lyrics_download_count || 0 %></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="mt-auto">
+                                        <!-- Audio Player -->
+                                        <div class="mb-3">
+                                            <audio controls class="w-100" preload="metadata">
+                                                <source src="/songs/<%= song.song_id %>/full-stream" type="audio/<%= song.audio_format %>">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+
+                                        <!-- Download Buttons -->
+                                        <div class="btn-group w-100 mb-2" role="group">
+                                            <a href="/songs/<%= song.song_id %>/download?token=<%= song.transaction_id %>" 
+                                               class="btn btn-primary btn-sm">
+                                                <i class="bi bi-download me-1"></i>Download Song
+                                            </a>
+                                            <a href="/songs/<%= song.song_id %>/lyrics-pdf?token=<%= song.transaction_id %>" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-file-earmark-pdf me-1"></i>Lyrics PDF
+                                            </a>
+                                        </div>
+
+                                        <!-- Additional Actions -->
+                                        <div class="d-flex gap-2">
+                                            <a href="/songs/<%= song.song_id %>" class="btn btn-outline-secondary btn-sm flex-fill">
+                                                <i class="bi bi-eye me-1"></i>View Details
+                                            </a>
+                                            <% if (song.artist_whatsapp) { %>
+                                                <a href="https://wa.me/<%= song.artist_whatsapp.replace(/\D/g, '') %>?text=Hi, I purchased your song '<%= song.title %>' and wanted to connect with you!" 
+                                                   target="_blank" 
+                                                   class="btn btn-success btn-sm">
+                                                    <i class="bi bi-whatsapp"></i>
+                                                </a>
+                                            <% } %>
+                                        </div>
+
+                                        <!-- Lyrics Preview -->
+                                        <% if (song.lyrics) { %>
+                                            <div class="mt-3">
+                                                <button class="btn btn-link btn-sm p-0 text-decoration-none" 
+                                                        type="button" 
+                                                        data-bs-toggle="collapse" 
+                                                        data-bs-target="#lyrics-<%= song.song_id %>" 
+                                                        aria-expanded="false">
+                                                    <i class="bi bi-music-note-list me-1"></i>Show Lyrics
+                                                </button>
+                                                <div class="collapse mt-2" id="lyrics-<%= song.song_id %>">
+                                                    <div class="card card-body bg-light">
+                                                        <small class="text-muted">
+                                                            <%= song.lyrics.substring(0, 200) %><% if (song.lyrics.length > 200) { %>...<% } %>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-graph-up me-2"></i>Purchase Summary</h6>
+                                <div class="row text-center">
+                                    <div class="col-6 col-md-3">
+                                        <div class="mb-2">
+                                            <strong class="d-block fs-4 text-primary"><%= purchasedSongs.length %></strong>
+                                            <small class="text-muted">Songs Owned</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="mb-2">
+                                            <strong class="d-block fs-4 text-success price-display" 
+                                                    data-price-usd="<%= purchasedSongs.reduce((sum, song) => sum + parseFloat(song.amount), 0) %>">
+                                                $<%= purchasedSongs.reduce((sum, song) => sum + parseFloat(song.amount), 0).toFixed(2) %>
+                                            </strong>
+                                            <small class="text-muted">Total Spent</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="mb-2">
+                                            <strong class="d-block fs-4 text-info">
+                                                <%= purchasedSongs.reduce((sum, song) => sum + (song.download_count || 0), 0) %>
+                                            </strong>
+                                            <small class="text-muted">Total Downloads</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="mb-2">
+                                            <strong class="d-block fs-4 text-warning">
+                                                <%= purchasedSongs.reduce((sum, song) => sum + (song.lyrics_download_count || 0), 0) %>
+                                            </strong>
+                                            <small class="text-muted">Lyrics Downloads</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <% } else { %>
+                <!-- Empty State -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-music-note-beamed text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No Purchased Songs Yet</h4>
+                    <p class="text-muted mb-4">
+                        You haven't purchased any songs yet. Browse our collection to find music you love!
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="/songs" class="btn btn-primary">
+                            <i class="bi bi-search me-2"></i>Browse Songs
+                        </a>
+                        <a href="/dashboard" class="btn btn-outline-secondary">
+                            <i class="bi bi-house me-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<style>
+.purchased-song-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.purchased-song-card:hover {
+    transform: translateY(-5px);
+}
+
+.badge.bg-outline-secondary {
+    background-color: transparent !important;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.badge.bg-outline-info {
+    background-color: transparent !important;
+    border: 1px solid #0dcaf0;
+    color: #0dcaf0;
+}
+
+audio {
+    height: 40px;
+}
+
+.btn-group .btn {
+    flex: 1;
+}
+</style>
