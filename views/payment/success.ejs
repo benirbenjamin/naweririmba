@@ -1,0 +1,127 @@
+<%- include('../layouts/main') %>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <!-- Success Icon -->
+                    <div class="success-icon mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h1 class="h2 text-success mb-3">Payment Successful!</h1>
+                    <p class="lead text-muted mb-4">
+                        Thank you for your purchase. Your song is now ready for download.
+                    </p>
+                    
+                    <!-- Transaction Details -->
+                    <div class="transaction-details bg-light rounded p-4 mb-4">
+                        <div class="row text-start">
+                            <div class="col-sm-6 mb-3">
+                                <strong>Song:</strong><br>
+                                <span class="text-muted"><%= transaction.song_title %></span>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong>Artist:</strong><br>
+                                <span class="text-muted"><%= transaction.artist_name %></span>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong>Amount Paid:</strong><br>
+                                <span class="text-success h5">$<%= parseFloat(transaction.amount).toFixed(2) %></span>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong>Transaction ID:</strong><br>
+                                <span class="text-muted small"><%= transaction.id %></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Download Section -->
+                    <div class="download-section mb-4">
+                        <h4 class="mb-3">Your Purchase</h4>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="<%= downloadUrl %>" class="btn btn-success btn-lg px-4">
+                                <i class="bi bi-download"></i> Download Song
+                            </a>
+                            <a href="/songs/<%= transaction.song_id %>" class="btn btn-outline-primary btn-lg px-4">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                        <p class="small text-muted mt-3">
+                            <i class="bi bi-info-circle"></i> 
+                            Your download link will remain active. Save it for future reference.
+                        </p>
+                    </div>
+                    
+                    <!-- What's Included -->
+                    <div class="included-items text-start">
+                        <h5 class="mb-3">What's Included:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                High-quality audio file in original format
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Complete song lyrics
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Exclusive ownership rights
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Artist contact information
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-outline-secondary me-3">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                        <a href="/songs" class="btn btn-primary">
+                            <i class="bi bi-music-note-list"></i> Browse More Songs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    animation: successPulse 1.5s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.transaction-details {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-left: 4px solid #28a745;
+}
+
+.download-section {
+    background: #fff;
+    border: 2px dashed #28a745;
+    border-radius: 8px;
+    padding: 20px;
+}
+</style>
+
+<%- include('../layouts/main') %>

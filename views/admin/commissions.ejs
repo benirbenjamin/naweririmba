@@ -1,0 +1,299 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Commission Management</h2>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-3">
+                        <i class="bi bi-currency-exchange"></i> 
+                        Currency: <span id="currentCurrency">USD</span>
+                    </span>
+                    <div class="btn-group me-3" role="group" aria-label="Currency">
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="USD">USD</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="RWF">RWF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commission Overview -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Commission</h6>
+                                    <h3 class="price-display" data-price-usd="<%= stats.totalCommission || 0 %>">
+                                        $<%= parseFloat(stats.totalCommission || 0).toFixed(2) %>
+                                    </h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-percent fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">This Month</h6>
+                                    <h3 class="price-display" data-price-usd="<%= stats.monthlyCommission || 0 %>">
+                                        $<%= parseFloat(stats.monthlyCommission || 0).toFixed(2) %>
+                                    </h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-calendar-month fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Commission Rate</h6>
+                                    <h3><%= stats.commissionRate || 40 %>%</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-gear fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Transactions</h6>
+                                    <h3><%= stats.totalTransactions || 0 %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-receipt fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commission Settings -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Commission Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="commissionForm">
+                                <div class="mb-3">
+                                    <label for="commission_rate" class="form-label">Commission Rate (%)</label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="commission_rate" 
+                                           name="commission_rate" 
+                                           value="<%= stats.commissionRate || 40 %>"
+                                           min="0" 
+                                           max="100" 
+                                           step="0.01">
+                                    <div class="form-text">Percentage of each sale that goes to the platform</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="referral_rate" class="form-label">Referral Commission Rate (%)</label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="referral_rate" 
+                                           name="referral_rate" 
+                                           value="<%= stats.referralRate || 5 %>"
+                                           min="0" 
+                                           max="100" 
+                                           step="0.01">
+                                    <div class="form-text">Percentage given to users who refer new customers</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="share_commission_rate" class="form-label">Share Commission Rate (%)</label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="share_commission_rate" 
+                                           name="share_commission_rate" 
+                                           value="<%= stats.shareCommissionRate || 15 %>"
+                                           min="0" 
+                                           max="100" 
+                                           step="0.01">
+                                    <div class="form-text">Percentage given to users who share songs that result in sales</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Commission Settings</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Commission Breakdown</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="commissionChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Commission Transactions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Recent Commission Transactions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Transaction ID</th>
+                                            <th>Song</th>
+                                            <th>Artist</th>
+                                            <th>Sale Amount</th>
+                                            <th>Commission</th>
+                                            <th>Artist Earnings</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (commissionTransactions && commissionTransactions.length > 0) { %>
+                                            <% commissionTransactions.forEach(transaction => { %>
+                                                <tr>
+                                                    <td><%= new Date(transaction.created_at).toLocaleDateString() %></td>
+                                                    <td>#<%= transaction.id %></td>
+                                                    <td>
+                                                        <strong><%= transaction.song_title %></strong>
+                                                    </td>
+                                                    <td><%= transaction.artist_name %></td>
+                                                    <td>
+                                                        <span class="price-display" data-price-usd="<%= transaction.amount %>">
+                                                            $<%= parseFloat(transaction.amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="price-display text-success" data-price-usd="<%= transaction.commission_amount %>">
+                                                            $<%= parseFloat(transaction.commission_amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="price-display" data-price-usd="<%= transaction.seller_amount %>">
+                                                            $<%= parseFloat(transaction.seller_amount || 0).toFixed(2) %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <% if (transaction.status === 'completed') { %>
+                                                            <span class="badge bg-success">Completed</span>
+                                                        <% } else if (transaction.status === 'pending') { %>
+                                                            <span class="badge bg-warning">Pending</span>
+                                                        <% } else { %>
+                                                            <span class="badge bg-danger">Failed</span>
+                                                        <% } %>
+                                                    </td>
+                                                </tr>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="8" class="text-center py-4">
+                                                    <div class="text-muted">
+                                                        <i class="bi bi-receipt fs-1 d-block mb-2"></i>
+                                                        No commission transactions found
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Commission Chart
+const commissionCtx = document.getElementById('commissionChart').getContext('2d');
+const commissionChart = new Chart(commissionCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Platform Commission', 'Artist Earnings', 'Referral Commission', 'Share Commission'],
+        datasets: [{
+            data: [
+                <%= stats.platformCommission || 0 %>,
+                <%= stats.artistEarnings || 0 %>,
+                <%= stats.referralCommission || 0 %>,
+                <%= stats.shareCommission || 0 %>
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 205, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Commission Form Handler
+document.getElementById('commissionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        commission_rate: formData.get('commission_rate'),
+        referral_rate: formData.get('referral_rate'),
+        share_commission_rate: formData.get('share_commission_rate')
+    };
+    
+    fetch('/admin/settings/commission', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Commission settings updated successfully!');
+            location.reload();
+        } else {
+            alert('Error updating commission settings: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating commission settings');
+    });
+});
+</script>

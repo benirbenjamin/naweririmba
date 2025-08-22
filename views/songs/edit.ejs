@@ -1,0 +1,249 @@
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Song
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Current Song Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <% if (song.cover_image) { %>
+                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                     class="img-fluid rounded shadow-sm" alt="<%= song.title %>">
+                            <% } else { %>
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="bi bi-music-note fs-1 text-muted"></i>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="col-md-8">
+                            <h5>Current Song Details</h5>
+                            <p><strong>Title:</strong> <%= song.title %></p>
+                            <p><strong>Artist:</strong> <%= song.artist_name %></p>
+                            <p><strong>Style:</strong> <%= song.style.charAt(0).toUpperCase() + song.style.slice(1) %></p>
+                            <p><strong>Genre:</strong> <%= song.genre.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %></p>
+                            <p><strong>Current Price:</strong> 
+                                <span class="price-display" data-price-usd="<%= song.price %>">
+                                    $<%= parseFloat(song.price).toFixed(2) %>
+                                </span>
+                            </p>
+                            <% if (song.is_sold) { %>
+                                <span class="badge bg-danger">SOLD - Cannot edit audio file</span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <form id="editSongForm" method="POST" action="/songs/<%= song.id %>/edit">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="title" class="form-label">Song Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="<%= song.title %>" required maxlength="100">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Price (USD) *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="price" name="price" 
+                                           value="<%= parseFloat(song.price || 0.99).toFixed(2) %>" 
+                                           min="0.99" max="999.99" step="0.01" required
+                                           placeholder="0.99">
+                                </div>
+                                <div class="form-text">Minimum $0.99, Maximum $999.99 (always in USD)</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="style" class="form-label">Music Style *</label>
+                                <select class="form-select" id="style" name="style" required>
+                                    <option value="">Select Style</option>
+                                    <option value="gospel" <%= song.style === 'gospel' ? 'selected' : '' %>>Gospel</option>
+                                    <option value="secular" <%= song.style === 'secular' ? 'selected' : '' %>>Secular</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="genre" class="form-label">Genre *</label>
+                                <select class="form-select" id="genre" name="genre" required>
+                                    <option value="">Select Genre</option>
+                                    <!-- Gospel Genres -->
+                                    <optgroup label="Gospel Genres" id="gospelGenres" style="display: <%= song.style === 'gospel' ? 'block' : 'none' %>">
+                                        <% if (genreOptions.gospel) { %>
+                                            <% genreOptions.gospel.forEach(genre => { %>
+                                                <option value="<%= genre %>" <%= song.genre === genre ? 'selected' : '' %>>
+                                                    <%= genre.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                                </option>
+                                            <% }) %>
+                                        <% } %>
+                                    </optgroup>
+                                    <!-- Secular Genres -->
+                                    <optgroup label="Secular Genres" id="secularGenres" style="display: <%= song.style === 'secular' ? 'block' : 'none' %>">
+                                        <% if (genreOptions.secular) { %>
+                                            <% genreOptions.secular.forEach(genre => { %>
+                                                <option value="<%= genre %>" <%= song.genre === genre ? 'selected' : '' %>>
+                                                    <%= genre.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                                </option>
+                                            <% }) %>
+                                        <% } %>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tempo" class="form-label">Tempo (BPM)</label>
+                                <input type="number" class="form-control" id="tempo" name="tempo" 
+                                       value="<%= song.tempo || 120 %>" min="60" max="200">
+                                <div class="form-text">Beats per minute (60-200)</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="time_signature" class="form-label">Time Signature</label>
+                                <select class="form-select" id="time_signature" name="time_signature">
+                                    <option value="4/4" <%= (song.time_signature || '4/4') === '4/4' ? 'selected' : '' %>>4/4</option>
+                                    <option value="3/4" <%= song.time_signature === '3/4' ? 'selected' : '' %>>3/4</option>
+                                    <option value="2/4" <%= song.time_signature === '2/4' ? 'selected' : '' %>>2/4</option>
+                                    <option value="6/8" <%= song.time_signature === '6/8' ? 'selected' : '' %>>6/8</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="lyrics" class="form-label">Lyrics</label>
+                            <textarea class="form-control" id="lyrics" name="lyrics" rows="8" 
+                                      placeholder="Enter song lyrics..."><%= song.lyrics || '' %></textarea>
+                            <div class="form-text">Optional: Add your song lyrics for buyers</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/songs/<%= song.id %>" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="updateBtn">
+                                <i class="bi bi-check-lg me-2"></i>Update Song
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const styleSelect = document.getElementById('style');
+    const genreSelect = document.getElementById('genre');
+    const form = document.getElementById('editSongForm');
+    
+    // Handle style change
+    styleSelect.addEventListener('change', function() {
+        const style = this.value;
+        const gospelGenres = document.getElementById('gospelGenres');
+        const secularGenres = document.getElementById('secularGenres');
+        
+        if (style === 'gospel') {
+            gospelGenres.style.display = 'block';
+            secularGenres.style.display = 'none';
+        } else if (style === 'secular') {
+            gospelGenres.style.display = 'none';
+            secularGenres.style.display = 'block';
+        } else {
+            gospelGenres.style.display = 'none';
+            secularGenres.style.display = 'none';
+        }
+        
+        genreSelect.value = '';
+    });
+    
+    // Price validation
+    const priceInput = document.getElementById('price');
+    
+    priceInput.addEventListener('input', function() {
+        const price = parseFloat(this.value);
+        if (isNaN(price) || price < 0.99 || price > 999.99) {
+            this.setCustomValidity('Price must be between $0.99 and $999.99');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Ensure price has a valid value on page load
+    if (!priceInput.value || parseFloat(priceInput.value) < 0.99) {
+        priceInput.value = '0.99';
+    }
+    
+    // Handle form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const priceInput = document.getElementById('price');
+        const priceValue = parseFloat(priceInput.value);
+        
+        // Validate price
+        if (isNaN(priceValue) || priceValue < 0.99 || priceValue > 999.99) {
+            showToast('Error', 'Please enter a valid price between $0.99 and $999.99', 'error');
+            return false;
+        }
+        
+        // Show loading state
+        const updateBtn = document.getElementById('updateBtn');
+        const originalText = updateBtn.innerHTML;
+        updateBtn.disabled = true;
+        updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+        
+        try {
+            // Prepare form data as JSON
+            const formData = {
+                title: document.getElementById('title').value.trim(),
+                price: priceValue.toFixed(2),
+                style: document.getElementById('style').value,
+                genre: document.getElementById('genre').value,
+                lyrics: document.getElementById('lyrics').value.trim(),
+                tempo: document.getElementById('tempo').value || '120',
+                time_signature: document.getElementById('time_signature').value || '4/4'
+            };
+            
+            // Validate required fields
+            if (!formData.title || !formData.style || !formData.genre) {
+                showToast('Error', 'Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                showToast('Success', 'Song updated successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = `/songs/<%= song.id %>`;
+                }, 1500);
+            } else {
+                showToast('Error', data.error || 'Failed to update song', 'error');
+            }
+        } catch (error) {
+            console.error('Update error:', error);
+            if (error.message.includes('Failed to fetch')) {
+                showToast('Error', 'Cannot connect to server. Please check if the server is running.', 'error');
+            } else {
+                showToast('Error', 'Failed to update song. Please try again.', 'error');
+            }
+        } finally {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = originalText;
+        }
+    });
+});
+</script>

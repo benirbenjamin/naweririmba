@@ -1,0 +1,596 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>User Management</h2>
+                <div>
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#composeEmailModal">
+                        <i class="bi bi-envelope me-2"></i>Send Email
+                    </button>
+                    <span class="badge bg-info">
+                        <%= users.length %> Users
+                    </span>
+                </div>
+            </div>
+
+            <!-- Filter and Search -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">User Type</label>
+                            <select name="type" class="form-select">
+                                <option value="">All Users</option>
+                                <option value="admin" <%= type === 'admin' ? 'selected' : '' %>>Admins</option>
+                                <option value="artist" <%= type === 'artist' ? 'selected' : '' %>>Artists</option>
+                                <option value="buyer" <%= type === 'buyer' ? 'selected' : '' %>>Buyers Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="active" <%= status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Name, email, WhatsApp..." value="<%= search || '' %>">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary d-block w-100">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll" class="form-check-input">
+                                    </th>
+                                    <th>User</th>
+                                    <th>Contact</th>
+                                    <th>Type</th>
+                                    <th>Songs</th>
+                                    <th>Purchases</th>
+                                    <th>Balance</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (users && users.length > 0) { %>
+                                    <% users.forEach(user => { %>
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input user-checkbox" 
+                                                       value="<%= user.id %>" data-email="<%= user.email %>">
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <%= user.name.charAt(0).toUpperCase() %>
+                                                    </div>
+                                                    <div>
+                                                        <strong><%= user.name %></strong>
+                                                        <% if (user.is_admin) { %>
+                                                            <span class="badge bg-danger ms-2">Admin</span>
+                                                        <% } %>
+                                                        <br>
+                                                        <small class="text-muted">ID: #<%= user.id %></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <small><i class="bi bi-envelope me-1"></i><%= user.email %></small><br>
+                                                    <% if (user.whatsapp) { %>
+                                                        <small>
+                                                            <i class="bi bi-whatsapp me-1"></i>
+                                                            <a href="https://wa.me/<%= user.whatsapp.replace(/\D/g, '') %>" target="_blank" class="text-decoration-none">
+                                                                <%= user.whatsapp %>
+                                                            </a>
+                                                        </small>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <% if (user.is_admin) { %>
+                                                    <span class="badge bg-danger">Admin</span>
+                                                <% } else if (user.songs_count > 0) { %>
+                                                    <span class="badge bg-success">Artist</span>
+                                                <% } else if (user.purchases_count > 0) { %>
+                                                    <span class="badge bg-info">Buyer</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">New User</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary"><%= user.songs_count || 0 %></span>
+                                                <% if (user.sold_songs_count > 0) { %>
+                                                    <small class="text-success">(<%= user.sold_songs_count %> sold)</small>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info"><%= user.purchases_count || 0 %></span>
+                                            </td>
+                                            <td>
+                                                <strong class="price-display" data-price-usd="<%= user.balance || 0 %>">
+                                                    $<%= parseFloat(user.balance || 0).toFixed(2) %>
+                                                </strong>
+                                            </td>
+                                            <td>
+                                                <small><%= new Date(user.created_at).toLocaleDateString() %></small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-sm" 
+                                                            onclick="viewUser('<%= user.id %>')" title="View Details">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                            onclick="editUser('<%= user.id %>')" title="Edit User">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-success btn-sm" 
+                                                            onclick="composeEmail('<%= user.email %>', '<%= user.name %>')" title="Send Email">
+                                                        <i class="bi bi-envelope"></i>
+                                                    </button>
+                                                    <% if (!user.is_admin || (currentUser && currentUser.id !== user.id)) { %>
+                                                        <button class="btn btn-outline-warning btn-sm" 
+                                                                onclick="resetPassword('<%= user.id %>')" title="Reset Password">
+                                                            <i class="bi bi-key"></i>
+                                                        </button>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="bi bi-people fs-1 d-block mb-2"></i>
+                                                No users found
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <% if (totalPages > 1) { %>
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>&type=<%= type || '' %>&status=<%= status || '' %>&search=<%= search || '' %>">Previous</a>
+                                    </li>
+                                <% } %>
+                                
+                                <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>&type=<%= type || '' %>&status=<%= status || '' %>&search=<%= search || '' %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>&type=<%= type || '' %>&status=<%= status || '' %>&search=<%= search || '' %>">Next</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Compose Email Modal -->
+<div class="modal fade" id="composeEmailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Send Email</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="emailForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Recipients</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="recipient_type" id="selected_users" value="selected" checked>
+                            <label class="form-check-label" for="selected_users">
+                                Selected Users (<span id="selectedCount">0</span>)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="recipient_type" id="all_users" value="all">
+                            <label class="form-check-label" for="all_users">
+                                All Users
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="recipient_type" id="custom_email" value="custom">
+                            <label class="form-check-label" for="custom_email">
+                                Custom Email Address
+                            </label>
+                        </div>
+                        <input type="email" class="form-control mt-2 d-none" id="customEmailInput" placeholder="Enter email address">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="emailSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="emailSubject" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="emailTemplate" class="form-label">Email Template</label>
+                        <select class="form-select" id="emailTemplate">
+                            <option value="">Custom Message</option>
+                            <option value="welcome">Welcome Message</option>
+                            <option value="order_completed">Order Completed</option>
+                            <option value="password_reset">Password Reset</option>
+                            <option value="promotion">Promotion/Announcement</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="emailMessage" class="form-label">Message</label>
+                        <textarea class="form-control" id="emailMessage" rows="8" required></textarea>
+                        <div class="form-text">
+                            Use {name} for user's name, {email} for email, {platform} for platform name
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>Send Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userDetails">
+                <!-- User details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Password Reset Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reset User Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="resetPasswordForm">
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        You are about to reset the password for <strong id="resetUserName"></strong>. 
+                        This will immediately change their password and invalidate any existing login sessions.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" 
+                               placeholder="Enter new password" minlength="6" required>
+                        <div class="form-text">Password must be at least 6 characters long</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" 
+                               placeholder="Confirm new password" required>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="confirmReset" required>
+                        <label class="form-check-label" for="confirmReset">
+                            I understand this will immediately reset the user's password
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-key me-2"></i>Reset Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Email templates
+const emailTemplates = {
+    welcome: {
+        subject: 'Welcome to Nawe Ririmba Space!',
+        message: `Hello {name},
+
+Welcome to Nawe Ririmba Space - where unique songs find their perfect owners!
+
+We're excited to have you join our music community. Here you can discover exclusive songs that are sold only once, making each purchase truly special.
+
+What you can do:
+- Browse our collection of unique songs
+- Purchase songs in USD or RWF
+- Upload your own music to sell
+- Connect with other music lovers
+
+If you have any questions, feel free to contact us.
+
+Best regards,
+The Nawe Ririmba Space Team`
+    },
+    order_completed: {
+        subject: 'Your Order is Complete - Download Ready!',
+        message: `Hello {name},
+
+Great news! Your order has been completed successfully.
+
+You can now download your purchased song and lyrics PDF from your dashboard. The song is now exclusively yours!
+
+If you have any issues accessing your download, please contact us.
+
+Thank you for choosing Nawe Ririmba Space!
+
+Best regards,
+The Nawe Ririmba Space Team`
+    },
+    password_reset: {
+        subject: 'Password Reset - Nawe Ririmba Space',
+        message: `Hello {name},
+
+Your password has been reset as requested.
+
+If you didn't request this change, please contact us immediately at benirabok@gmail.com.
+
+For security, we recommend logging in and changing your password.
+
+Best regards,
+The Nawe Ririmba Space Team`
+    },
+    promotion: {
+        subject: 'Special Announcement from Nawe Ririmba Space',
+        message: `Hello {name},
+
+We have exciting news to share with you!
+
+[Add your promotional content here]
+
+Don't miss out on this opportunity to discover amazing music.
+
+Best regards,
+The Nawe Ririmba Space Team`
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle select all checkbox
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateSelectedCount();
+    });
+    
+    // Handle individual checkboxes
+    document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+    
+    // Handle recipient type change
+    document.querySelectorAll('input[name="recipient_type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const customInput = document.getElementById('customEmailInput');
+            if (this.value === 'custom') {
+                customInput.classList.remove('d-none');
+                customInput.required = true;
+            } else {
+                customInput.classList.add('d-none');
+                customInput.required = false;
+            }
+        });
+    });
+    
+    // Handle email template selection
+    document.getElementById('emailTemplate').addEventListener('change', function() {
+        const template = emailTemplates[this.value];
+        if (template) {
+            document.getElementById('emailSubject').value = template.subject;
+            document.getElementById('emailMessage').value = template.message;
+        }
+    });
+    
+    // Handle email form submission
+    document.getElementById('emailForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+            
+            const formData = {
+                recipient_type: document.querySelector('input[name="recipient_type"]:checked').value,
+                subject: document.getElementById('emailSubject').value,
+                message: document.getElementById('emailMessage').value
+            };
+            
+            if (formData.recipient_type === 'selected') {
+                const selectedUsers = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                    .map(cb => cb.dataset.email);
+                formData.recipients = selectedUsers;
+            } else if (formData.recipient_type === 'custom') {
+                formData.recipients = [document.getElementById('customEmailInput').value];
+            }
+            
+            const response = await fetch('/admin/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast('Success', `Email sent to ${result.count} recipients`, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('composeEmailModal')).hide();
+                this.reset();
+            } else {
+                showToast('Error', result.error || 'Failed to send email', 'error');
+            }
+        } catch (error) {
+            console.error('Email error:', error);
+            showToast('Error', 'Failed to send email', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+});
+
+function updateSelectedCount() {
+    const count = document.querySelectorAll('.user-checkbox:checked').length;
+    document.getElementById('selectedCount').textContent = count;
+}
+
+function composeEmail(email, name) {
+    // Check the custom radio and fill email
+    document.getElementById('custom_email').checked = true;
+    document.getElementById('customEmailInput').classList.remove('d-none');
+    document.getElementById('customEmailInput').value = email;
+    document.getElementById('customEmailInput').required = true;
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('composeEmailModal')).show();
+}
+
+function viewUser(userId) {
+    window.location.href = `/admin/users/${userId}/view`;
+}
+
+function editUser(userId) {
+    window.location.href = `/admin/users/${userId}/edit`;
+}
+
+function resetPassword(userId) {
+    // Get user details first
+    fetch(`/admin/users/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.user;
+                document.getElementById('resetUserName').textContent = user.name;
+                document.getElementById('resetPasswordForm').dataset.userId = userId;
+                
+                // Reset form
+                document.getElementById('resetPasswordForm').reset();
+                
+                // Show modal
+                new bootstrap.Modal(document.getElementById('resetPasswordModal')).show();
+            } else {
+                showToast('Error', 'Failed to load user details', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Failed to load user details', 'error');
+        });
+}
+
+// Handle password reset form submission
+document.getElementById('resetPasswordForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const userId = this.dataset.userId;
+    
+    // Validate passwords match
+    if (newPassword !== confirmPassword) {
+        showToast('Error', 'Passwords do not match', 'error');
+        return;
+    }
+    
+    // Validate password length
+    if (newPassword.length < 6) {
+        showToast('Error', 'Password must be at least 6 characters long', 'error');
+        return;
+    }
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Resetting...';
+        
+        const response = await fetch(`/admin/auth/reset-password/${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ newPassword })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast('Success', result.message, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal')).hide();
+            this.reset();
+        } else {
+            showToast('Error', result.error || 'Failed to reset password', 'error');
+        }
+    } catch (error) {
+        console.error('Password reset error:', error);
+        showToast('Error', 'Failed to reset password', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+});
+
+// Real-time password confirmation validation
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword && newPassword !== confirmPassword) {
+        this.setCustomValidity('Passwords do not match');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+</div>

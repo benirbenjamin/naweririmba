@@ -1,0 +1,276 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Statistics & Analytics</h2>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-3">
+                        <i class="bi bi-currency-exchange"></i> 
+                        Currency: <span id="currentCurrency">USD</span>
+                    </span>
+                    <div class="btn-group me-3" role="group" aria-label="Currency">
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="USD">USD</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm currency-option" data-currency="RWF">RWF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Revenue</h6>
+                                    <h3 class="price-display" data-price-usd="<%= stats.totalRevenue || 0 %>">
+                                        $<%= parseFloat(stats.totalRevenue || 0).toFixed(2) %>
+                                    </h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-currency-dollar fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Sales</h6>
+                                    <h3><%= stats.totalSales || 0 %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-bag-check fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Users</h6>
+                                    <h3><%= stats.totalUsers || 0 %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-people fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Songs</h6>
+                                    <h3><%= stats.totalSongs || 0 %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-music-note fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Chart -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Revenue Trend (Last 30 Days)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="revenueChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Top Performing Songs</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (stats.topSongs && stats.topSongs.length > 0) { %>
+                                <% stats.topSongs.forEach((song, index) => { %>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <strong><%= song.title %></strong><br>
+                                            <small class="text-muted">by <%= song.artist_name %></small>
+                                        </div>                        <div class="text-end">
+                            <small class="price-display" data-price-usd="<%= song.total_revenue || 0 %>">
+                                $<%= parseFloat(song.total_revenue || 0).toFixed(2) %>
+                            </small><br>
+                            <small class="text-muted"><%= song.sales_count || 0 %> sales</small>
+                        </div>
+                                    </div>
+                                    <% if (index < stats.topSongs.length - 1) { %>
+                                        <hr class="my-2">
+                                    <% } %>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="text-center text-muted">
+                                    <i class="bi bi-music-note fs-3 d-block mb-2"></i>
+                                    No sales data available
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales by Currency -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Sales by Currency</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="currencyChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Monthly Growth</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <h4 class="text-success">+<%= stats.monthlyGrowth || 0 %>%</h4>
+                                    <small class="text-muted">Revenue Growth</small>
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="text-info">+<%= stats.userGrowth || 0 %>%</h4>
+                                    <small class="text-muted">User Growth</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>This Month</h6>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Revenue:</span>
+                                        <span class="price-display" data-price-usd="<%= stats.monthlyRevenue || 0 %>">
+                                            $<%= parseFloat(stats.monthlyRevenue || 0).toFixed(2) %>
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Sales:</span>
+                                        <span><%= stats.monthlySales || 0 %></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>New Users:</span>
+                                        <span><%= stats.monthlyNewUsers || 0 %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (stats.recentActivity && stats.recentActivity.length > 0) { %>
+                                <div class="list-group list-group-flush">
+                                    <% stats.recentActivity.forEach(activity => { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold"><%= activity.type %></div>
+                                                <small class="text-muted"><%= activity.description %></small>
+                                            </div>
+                                            <small class="text-muted"><%= new Date(activity.created_at).toLocaleDateString() %></small>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } else { %>
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-activity fs-3 d-block mb-2"></i>
+                                    No recent activity
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Revenue Chart
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const revenueChart = new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+        labels: [<%= stats.revenueLabels ? stats.revenueLabels.map(label => `'${label}'`).join(',') : '' %>],
+        datasets: [{
+            label: 'Revenue',
+            data: [<%= stats.revenueData ? stats.revenueData.join(',') : '0' %>],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value.toFixed(2);
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Currency Chart
+const currencyCtx = document.getElementById('currencyChart').getContext('2d');
+const currencyChart = new Chart(currencyCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['USD', 'RWF'],
+        datasets: [{
+            data: [<%= stats.usdSales || 0 %>, <%= stats.rwfSales || 0 %>],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 99, 132, 0.8)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>

@@ -1,0 +1,97 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <img src="/uploads/images/logo.png" alt="Nawe Ririmba Space" width="64" height="64" class="mb-3 auth-logo" style="object-fit: contain;">
+                        <h2 class="mb-0">Join Nawe Ririmba Space</h2>
+                        <p class="text-muted">Create your account to start exploring unique music</p>
+                    </div>
+                    
+                    <% if (error) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/auth/register" method="POST" id="registerForm">
+                        <% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+                            <input type="hidden" name="redirectUrl" value="<%= redirectUrl %>">
+                        <% } %>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" name="phoneNumber" required pattern="[0-9]{10,}" title="Please enter a valid phone number (minimum 10 digits)">
+                            <small class="form-text text-muted">Enter your phone number without spaces or special characters</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" name="confirmPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Security Question</label>
+                            <select class="form-select" name="securityQuestion" required>
+                                <option value="">Select a security question</option>
+                                <% if (securityQuestions && securityQuestions.length > 0) { %>
+                                    <% securityQuestions.forEach(function(question) { %>
+                                        <option value="<%= question.id %>"><%= question.question %></option>
+                                    <% }); %>
+                                <% } else { %>
+                                    <option value="1">What is your mother's maiden name?</option>
+                                    <option value="2">What was the name of your first pet?</option>
+                                    <option value="3">What city were you born in?</option>
+                                    <option value="4">What is the name of your favorite teacher?</option>
+                                    <option value="5">What was your childhood nickname?</option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Security Answer</label>
+                            <input type="text" class="form-control" name="securityAnswer" required placeholder="Enter your answer">
+                            <small class="form-text text-muted">This will be used to reset your password if needed</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Referral Code <span class="text-muted" style="font-weight:normal;">(optional)</span></label>
+                            <input type="text" class="form-control" name="referralCode" placeholder="Enter referral code if you have one">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="acceptTerms" id="acceptTerms" required>
+                            <label class="form-check-label" for="acceptTerms">
+                                I agree to the <a href="/terms" target="_blank">Terms and Conditions</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="registerButton">
+                            <span class="register-text">Register</span>
+                            <span class="register-spinner d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Creating account...
+                            </span>
+                        </button>
+                    </form>
+                    <p class="text-center mt-3">
+                        Already have an account? 
+                        <% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+                            <a href="/login?redirectUrl=<%= encodeURIComponent(redirectUrl) %>">Login</a>
+                        <% } else { %>
+                            <a href="/login">Login</a>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/auth-forms.js"></script>

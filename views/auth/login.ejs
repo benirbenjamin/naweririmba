@@ -1,0 +1,65 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <img src="/uploads/images/logo.png" alt="Nawe Ririmba Space" width="64" height="64" class="mb-3 auth-logo" style="object-fit: contain;">
+                        <h2 class="mb-0">Welcome Back</h2>
+                        <p class="text-muted">Sign in to your account</p>
+                    </div>
+                    
+                    <% if (error) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                    <% } %>
+                    
+                    <% if (success) { %>
+                        <div class="alert alert-success" role="alert">
+                            <%= success %>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/auth/login" method="POST" id="loginForm">
+                        <% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+                            <input type="hidden" name="redirectUrl" value="<%= redirectUrl %>">
+                        <% } %>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me for 30 days
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="loginButton">
+                            <span class="login-text">Login</span>
+                            <span class="login-spinner d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Logging in...
+                            </span>
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-2">
+                            <a href="/auth/reset-password" class="text-decoration-none">Forgot Password?</a>
+                        </p>
+                        <p class="mb-0">
+                            Don't have an account? 
+                            <a href="/register<% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>?redirect=<%= encodeURIComponent(redirectUrl) %><% } %>">Register</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/auth-forms.js"></script>

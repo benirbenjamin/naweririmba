@@ -1,0 +1,607 @@
+<%- include('../partials/header') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3><i class="bi bi-music-note-list"></i> Browse Songs</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Filters -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="styleFilter" class="form-label">Style</label>
+                            <select class="form-select" id="styleFilter">
+                                <option value="">All Styles</option>
+                                <option value="gospel">Gospel</option>
+                                <option value="secular">Secular</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="genreFilter" class="form-label">Genre</label>
+                            <select class="form-select" id="genreFilter">
+                                <option value="">All Genres</option>
+                                <optgroup label="Gospel">
+                                    <option value="igisirimba">Igisirimba</option>
+                                    <option value="zouke">Zouke</option>
+                                    <option value="zulu">Zulu</option>
+                                    <option value="reggae">Reggae</option>
+                                    <option value="zulu-reggae">Zulu Reggae</option>
+                                    <option value="techno">Techno</option>
+                                    <option value="seben">Seben</option>
+                                    <option value="ikinimba">Ikinimba</option>
+                                    <option value="country">Country</option>
+                                    <option value="slow">Slow</option>
+                                    <option value="rb">R&B</option>
+                                    <option value="pop">Pop</option>
+                                </optgroup>
+                                <optgroup label="Secular">
+                                    <option value="afrobeat">Afrobeat</option>
+                                    <option value="hiphop">Hip Hop</option>
+                                    <option value="rap">Rap</option>
+                                    <option value="rnb">R&B</option>
+                                    <option value="dance">Dance</option>
+                                    <option value="pop-secular">Pop</option>
+                                    <option value="rock">Rock</option>
+                                    <option value="jazz">Jazz</option>
+                                    <option value="reggaeton">Reggaeton</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="priceFilter" class="form-label">Price Range</label>
+                            <select class="form-select" id="priceFilter">
+                                <option value="">Any Price</option>
+                                <option value="0-1.99">Under $2</option>
+                                <option value="2-4.99">$2 - $4.99</option>
+                                <option value="5-9.99">$5 - $9.99</option>
+                                <option value="10-">$10+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="sortOrder" class="form-label">Sort By</label>
+                            <select class="form-select" id="sortOrder">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Box -->
+                    <div class="row mb-4">
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchBox" placeholder="Search by title or artist...">
+                                <button class="btn btn-primary" type="button" id="searchBtn">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100" id="resetFilters">
+                                <i class="bi bi-arrow-clockwise"></i> Reset Filters
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Songs Grid -->
+                    <div class="row g-4" id="songsContainer">
+                        <% if (typeof songs !== 'undefined' && songs && songs.length > 0) { %>
+                            <% songs.forEach(function(song) { %>
+                                <div class="col-xl-3 col-lg-4 col-md-6 mb-4 song-card-container" 
+                                     data-style="<%= song.style %>" 
+                                     data-genre="<%= song.genre %>" 
+                                     data-price="<%= song.price %>">
+                                    <div class="card song-card h-100 shadow-sm">
+                                        <div class="card-img-container position-relative">
+                                            <!-- Cover image with play button overlay -->
+                                            <% if (song.cover_image) { %>
+                                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                                     class="card-img-top song-cover" alt="<%= song.title %>"
+                                                     onerror="this.onerror=null; this.src='/uploads/covers/default.svg'">
+                                            <% } else { %>
+                                                <img src="/uploads/covers/default.svg" 
+                                                     class="card-img-top song-cover" alt="<%= song.title %>">
+                                            <% } %>
+                                            <button class="btn btn-play play-preview" data-preview-url="/songs/<%= song.id %>/preview" data-song-id="<%= song.id %>">
+                                                <i class="bi bi-play-circle-fill"></i>
+                                            </button>
+                                            <% if (song.style === 'gospel') { %>
+                                                <span class="badge bg-primary style-badge">Gospel</span>
+                                            <% } else { %>
+                                                <span class="badge bg-info style-badge">Secular</span>
+                                            <% } %>
+                                            <span class="badge bg-secondary genre-badge"><%= song.genre %></span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title text-truncate"><%= song.title %></h5>
+                                            <p class="card-text mb-1">
+                                                <small class="text-muted">By <%= song.artist_name %></small>
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span class="price-tag fw-bold price-display" data-price-usd="<%= song.price %>">
+                                                    <%= currency.convert(song.price, currency.current) %>
+                                                </span>
+                                                <a href="/songs/<%= song.id %>" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-info-circle"></i> Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="col-12 text-center py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-music-note-list empty-icon"></i>
+                                    <h4 class="mt-3">No songs found</h4>
+                                    <p class="text-muted">Try adjusting your filters or check back later</p>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio Preview Player -->
+<div class="audio-preview-player d-none" id="audioPreviewPlayer">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-sm btn-primary me-2" id="previewPlayPauseBtn">
+                    <i class="bi bi-pause-fill"></i>
+                </button>
+                <div>
+                    <p class="mb-0 fw-bold" id="previewSongTitle">Song Title</p>
+                    <p class="mb-0 small" id="previewArtistName">Artist Name</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <span id="previewCurrentTime">0:00</span>
+                <div class="preview-progress mx-2">
+                    <div class="progress" style="width: 150px;">
+                        <div class="progress-bar" id="previewProgressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span id="previewDuration">0:00</span>
+                <button class="btn btn-sm btn-link text-dark" id="closePreviewBtn">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <audio id="previewAudio"></audio>
+</div>
+
+<script>
+// Client-side filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const styleFilter = document.getElementById('styleFilter');
+    const genreFilter = document.getElementById('genreFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const sortOrder = document.getElementById('sortOrder');
+    const searchBox = document.getElementById('searchBox');
+    const searchBtn = document.getElementById('searchBtn');
+    const resetFilters = document.getElementById('resetFilters');
+    const songsContainer = document.getElementById('songsContainer');
+    
+    // Preview player elements
+    const audioPreviewPlayer = document.getElementById('audioPreviewPlayer');
+    const previewAudio = document.getElementById('previewAudio');
+    const previewPlayPauseBtn = document.getElementById('previewPlayPauseBtn');
+    const previewSongTitle = document.getElementById('previewSongTitle');
+    const previewArtistName = document.getElementById('previewArtistName');
+    const previewCurrentTime = document.getElementById('previewCurrentTime');
+    const previewDuration = document.getElementById('previewDuration');
+    const previewProgressBar = document.getElementById('previewProgressBar');
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+    
+    // Filter songs based on selected criteria
+    function filterSongs() {
+        const style = styleFilter.value;
+        const genre = genreFilter.value;
+        const price = priceFilter.value;
+        const search = searchBox.value.toLowerCase();
+        
+        const songs = document.querySelectorAll('.song-card-container');
+        
+        songs.forEach(song => {
+            const songStyle = song.dataset.style;
+            const songGenre = song.dataset.genre;
+            const songPrice = parseFloat(song.dataset.price);
+            const songTitle = song.querySelector('.card-title').textContent.toLowerCase();
+            const songArtist = song.querySelector('small').textContent.toLowerCase();
+            
+            let styleMatch = true;
+            let genreMatch = true;
+            let priceMatch = true;
+            let searchMatch = true;
+            
+            // Style filter
+            if (style && songStyle !== style) {
+                styleMatch = false;
+            }
+            
+            // Genre filter
+            if (genre && songGenre !== genre) {
+                genreMatch = false;
+            }
+            
+            // Price filter
+            if (price) {
+                const [min, max] = price.split('-').map(p => parseFloat(p) || 999999);
+                if (songPrice < min || (max && songPrice > max)) {
+                    priceMatch = false;
+                }
+            }
+            
+            // Search filter
+            if (search && !songTitle.includes(search) && !songArtist.includes(search)) {
+                searchMatch = false;
+            }
+            
+            // Show/hide based on filters
+            if (styleMatch && genreMatch && priceMatch && searchMatch) {
+                song.style.display = 'block';
+            } else {
+                song.style.display = 'none';
+            }
+        });
+        
+        // Check if any songs are visible
+        const visibleSongs = document.querySelectorAll('.song-card-container[style="display: block"]');
+        if (visibleSongs.length === 0) {
+            // Show empty state
+            let emptyStateElement = document.querySelector('.empty-state-container');
+            if (!emptyStateElement) {
+                emptyStateElement = document.createElement('div');
+                emptyStateElement.className = 'col-12 text-center py-5 empty-state-container';
+                emptyStateElement.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-music-note-list empty-icon"></i>
+                        <h4 class="mt-3">No songs found</h4>
+                        <p class="text-muted">Try adjusting your filters or check back later</p>
+                    </div>
+                `;
+                songsContainer.appendChild(emptyStateElement);
+            } else {
+                emptyStateElement.style.display = 'block';
+            }
+        } else {
+            // Hide empty state if visible
+            const emptyStateElement = document.querySelector('.empty-state-container');
+            if (emptyStateElement) {
+                emptyStateElement.style.display = 'none';
+            }
+        }
+    }
+    
+    // Sort songs based on selected criteria
+    function sortSongs() {
+        const sort = sortOrder.value;
+        const songs = Array.from(document.querySelectorAll('.song-card-container'));
+        
+        songs.sort((a, b) => {
+            if (sort === 'newest') {
+                // You would need data-created-at attributes for this
+                return 0; // Default to no sorting for now
+            } else if (sort === 'oldest') {
+                // You would need data-created-at attributes for this
+                return 0; // Default to no sorting for now
+            } else if (sort === 'price-asc') {
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            } else if (sort === 'price-desc') {
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            }
+        });
+        
+        // Remove and re-append in new order
+        songs.forEach(song => {
+            songsContainer.appendChild(song);
+        });
+    }
+    
+    // STRICT Preview player logic with 40-second limit and no replay
+    let currentPreviewSong = null;
+    let previewExhausted = false;
+    let sessionPlayCount = {};
+    const PREVIEW_DURATION_LIMIT = 40; // 40 seconds max
+    const MAX_PLAYS_PER_SONG = 1; // Only 1 play per song session
+    
+    document.querySelectorAll('.play-preview').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const previewUrl = btn.getAttribute('data-preview-url');
+            const songId = btn.getAttribute('data-song-id');
+            const card = btn.closest('.song-card');
+            const title = card ? card.querySelector('.card-title').textContent : '';
+            const artist = card ? card.querySelector('.card-text small').textContent : '';
+            
+            // Check if user has exceeded play count for this song
+            if (sessionPlayCount[songId] && sessionPlayCount[songId] >= MAX_PLAYS_PER_SONG) {
+                showPreviewMessage('You have reached the maximum preview plays for this song. Purchase to listen unlimited times!', 'warning');
+                return;
+            }
+            
+            if (previewUrl) {
+                // Reset if loading new song
+                if (currentPreviewSong !== songId) {
+                    previewExhausted = false;
+                    currentPreviewSong = songId;
+                }
+                
+                // Increment play count
+                sessionPlayCount[songId] = (sessionPlayCount[songId] || 0) + 1;
+                
+                previewAudio.src = previewUrl;
+                previewSongTitle.textContent = title;
+                previewArtistName.textContent = artist;
+                audioPreviewPlayer.classList.remove('d-none');
+                previewAudio.play().catch(error => {
+                    console.error('Error playing preview:', error);
+                    showPreviewMessage('Error loading preview. Please try again.', 'error');
+                });
+            }
+        });
+    });
+    
+    // Play/pause button with restrictions
+    previewPlayPauseBtn.addEventListener('click', function() {
+        if (previewExhausted) {
+            showPreviewMessage('Preview time exhausted! Purchase this song to continue listening.', 'info');
+            return;
+        }
+        
+        if (previewAudio.paused) {
+            previewAudio.play().catch(error => {
+                console.error('Error playing preview:', error);
+                showPreviewMessage('Error playing preview. Please try again.', 'error');
+            });
+        } else {
+            previewAudio.pause();
+        }
+    });
+    
+    // Close preview player
+    closePreviewBtn.addEventListener('click', function() {
+        previewAudio.pause();
+        audioPreviewPlayer.classList.add('d-none');
+        previewExhausted = false;
+    });
+    
+    // STRICT: Monitor playback time and enforce 40-second limit
+    previewAudio.addEventListener('timeupdate', function() {
+        const current = previewAudio.currentTime;
+        const duration = previewAudio.duration;
+        
+        // STRICT: Stop playback at 40 seconds
+        if (current >= PREVIEW_DURATION_LIMIT) {
+            previewAudio.pause();
+            previewExhausted = true;
+            
+            // Disable play button
+            previewPlayPauseBtn.disabled = true;
+            previewPlayPauseBtn.style.opacity = '0.5';
+            previewPlayPauseBtn.title = 'Preview exhausted - Purchase to continue';
+            
+            showPreviewMessage('40-second preview completed! Purchase this song for full access.', 'info');
+            return;
+        }
+        
+        previewCurrentTime.textContent = formatTime(current);
+        previewDuration.textContent = formatTime(Math.min(duration || 0, PREVIEW_DURATION_LIMIT));
+        
+        if (duration > 0) {
+            // Show progress based on preview limit, not full duration
+            const progressPercent = (current / PREVIEW_DURATION_LIMIT) * 100;
+            previewProgressBar.style.width = Math.min(progressPercent, 100) + '%';
+        }
+    });
+    
+    // Reset play button when audio loads
+    previewAudio.addEventListener('loadstart', function() {
+        previewPlayPauseBtn.disabled = false;
+        previewPlayPauseBtn.style.opacity = '1';
+        previewPlayPauseBtn.title = 'Play/Pause Preview (40 seconds max)';
+    });
+    
+    // Update play/pause icon
+    previewAudio.addEventListener('play', function() {
+        previewPlayPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+    });
+    
+    previewAudio.addEventListener('pause', function() {
+        previewPlayPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
+    });
+    
+    // STRICT: Prevent seeking in preview mode
+    previewProgressBar.parentElement.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPreviewMessage('Seeking is disabled in preview mode. Purchase the song for full control!', 'warning');
+    });
+    
+    // STRICT: Prevent right-click to download
+    previewAudio.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showPreviewMessage('Download is disabled. Purchase the song to download!', 'warning');
+    });
+    
+    // Preview message system
+    function showPreviewMessage(text, type = 'info') {
+        let notification = document.getElementById('previewNotification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'previewNotification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 350px;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                color: white;
+            `;
+            document.body.appendChild(notification);
+        }
+        
+        const colors = {
+            info: '#17a2b8',
+            warning: '#ffc107',
+            error: '#dc3545'
+        };
+        
+        notification.style.backgroundColor = colors[type] || colors.info;
+        notification.textContent = text;
+        notification.style.opacity = '1';
+        
+        setTimeout(() => {
+            if (notification) {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification && notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+    function formatTime(sec) {
+        sec = Math.floor(sec);
+        const min = Math.floor(sec / 60);
+        const s = sec % 60;
+        return min + ':' + (s < 10 ? '0' : '') + s;
+    }
+    
+    // Set up event listeners
+    styleFilter.addEventListener('change', filterSongs);
+    genreFilter.addEventListener('change', filterSongs);
+    priceFilter.addEventListener('change', filterSongs);
+    sortOrder.addEventListener('change', sortSongs);
+    searchBtn.addEventListener('click', filterSongs);
+    searchBox.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            filterSongs();
+        }
+    });
+    
+    resetFilters.addEventListener('click', function() {
+        styleFilter.value = '';
+        genreFilter.value = '';
+        priceFilter.value = '';
+        sortOrder.value = 'newest';
+        searchBox.value = '';
+        filterSongs();
+    });
+    
+    // Initialize
+    filterSongs();
+});
+</script>
+
+<style>
+    .song-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .song-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .card-img-container {
+        height: 180px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .song-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .song-card:hover .song-cover {
+        transform: scale(1.05);
+    }
+    
+    .btn-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255,255,255,0.8);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .song-card:hover .btn-play {
+        opacity: 1;
+    }
+    
+    .btn-play i {
+        font-size: 30px;
+        color: #007bff;
+    }
+    
+    .style-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+    
+    .genre-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .price-tag {
+        color: #28a745;
+        font-size: 1.2rem;
+    }
+    
+    .audio-preview-player {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        padding: 10px 0;
+        z-index: 1000;
+    }
+    
+    .preview-progress {
+        cursor: pointer;
+    }
+    
+    .empty-state {
+        padding: 40px 0;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: #ccc;
+    }
+</style>
+

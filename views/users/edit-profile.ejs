@@ -1,0 +1,115 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-person-gear"></i> Edit Profile</h2>
+                <a href="/users/profile" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Profile
+                </a>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <% if (success) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <% if (success === 'profile_updated') { %>
+                        Profile updated successfully!
+                    <% } %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <% if (error === 'missing_fields') { %>
+                        Please fill in all required fields.
+                    <% } else if (error === 'email_taken') { %>
+                        This email is already registered to another account.
+                    <% } else if (error === 'update_failed') { %>
+                        Failed to update profile. Please try again.
+                    <% } else if (error === 'load_failed') { %>
+                        Failed to load profile data. Please try again.
+                    <% } %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <form action="/users/profile/edit" method="POST" id="editProfileForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" 
+                                           value="<%= user.name %>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           value="<%= user.email %>" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="whatsapp" class="form-label">WhatsApp Number *</label>
+                            <input type="tel" class="form-control" id="whatsapp" name="whatsapp" 
+                                   value="<%= user.whatsapp %>" placeholder="+250 XXX XXX XXX" required>
+                            <div class="form-text">Include country code (e.g., +250 for Rwanda)</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h5 class="mb-3">Security Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="security_question_id" class="form-label">Security Question *</label>
+                                    <select class="form-select" id="security_question_id" name="security_question_id" required>
+                                        <option value="">Choose a security question...</option>
+                                        <% securityQuestions.forEach(question => { %>
+                                            <option value="<%= question.id %>" 
+                                                <%= user.security_question_id == question.id ? 'selected' : '' %>>
+                                                <%= question.question %>
+                                            </option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="security_answer" class="form-label">Security Answer *</label>
+                                    <input type="text" class="form-control" id="security_answer" name="security_answer" 
+                                           placeholder="Enter your answer" required>
+                                    <div class="form-text">Enter a new answer or confirm your current answer</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/users/profile/change-password" class="btn btn-outline-warning">
+                                <i class="bi bi-key"></i> Change Password
+                            </a>
+                            <div>
+                                <a href="/users/profile" class="btn btn-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('editProfileForm').addEventListener('submit', function() {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split spinner-border spinner-border-sm me-2"></i>Saving...';
+    submitBtn.disabled = true;
+});
+</script>

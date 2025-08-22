@@ -1,0 +1,380 @@
+<style>
+/* Profile Avatar Styles for Header */
+.profile-avatar {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+/* Avatar size variations */
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.avatar-md {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+/* Avatar color variations */
+.profile-avatar-0 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.profile-avatar-1 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.profile-avatar-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.profile-avatar-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.profile-avatar-4 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.profile-avatar-5 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.profile-avatar-6 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+.profile-avatar-7 { background: linear-gradient(135deg, #ff8a80 0%, #ea4c89 100%); }
+.profile-avatar-8 { background: linear-gradient(135deg, #8fd3f4 0%, #84fab0 100%); }
+
+/* Header specific adjustments */
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+}
+
+.balance-display {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/uploads/images/logo.png" alt="Nawe Ririmba Space Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="object-fit: contain;">
+            <span class="fw-bold">Nawe Ririmba Space</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/songs">Browse Songs</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" data-bs-toggle="dropdown">
+                        Info
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/about">About Us</a></li>
+                        <li><a class="dropdown-item" href="/contact">Contact</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/terms">Terms of Service</a></li>
+                        <li><a class="dropdown-item" href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </li>
+                <% if (user && user.is_admin) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i> Admin Panel
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/admin/dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/users">
+                            <i class="bi bi-people"></i> Users
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/songs">
+                            <i class="bi bi-music-note"></i> Songs
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/transactions">
+                            <i class="bi bi-receipt"></i> Transactions
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/withdrawals">
+                            <i class="bi bi-wallet2"></i> Withdrawals
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/revenue">
+                            <i class="bi bi-graph-up"></i> Revenue
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/commissions">
+                            <i class="bi bi-percent"></i> Commissions
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/statistics">
+                            <i class="bi bi-bar-chart"></i> Statistics
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/notifications">
+                            <i class="bi bi-bell"></i> Notifications
+                        </a></li>
+                        <li><a class="dropdown-item" href="/admin/export">
+                            <i class="bi bi-download"></i> Export
+                        </a></li>
+                    </ul>
+                </li>
+                <% } %>
+            </ul>
+            
+            <ul class="navbar-nav">
+                <!-- Currency Selector -->
+                <% try { %>
+                    <% if (typeof currency !== 'undefined' && currency && currency.current) { %>
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-currency-exchange"></i> <span id="currentCurrency"><%= currency.current %></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-header">
+                                <small class="text-muted">Select Currency</small>
+                            </li>
+                            <li><a class="dropdown-item currency-option <%= currency.current === 'USD' ? 'active' : '' %>" href="#" data-currency="USD">
+                                <i class="bi bi-currency-dollar"></i> US Dollar (USD)
+                                <% if (currency.current !== 'USD') { %><small class="text-muted">- Primary</small><% } %>
+                            </a></li>
+                            <li><a class="dropdown-item currency-option <%= currency.current === 'RWF' ? 'active' : '' %>" href="#" data-currency="RWF">
+                                <i class="bi bi-cash"></i> Rwandan Franc (RWF)
+                                <% if (currency.current !== 'RWF') { %><small class="text-muted">- Local</small><% } %>
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-item-text">
+                                <small class="text-muted" id="exchange-rate-display">
+                                    <% try { %>
+                                        <% if (typeof currency !== 'undefined' && currency && currency.rates && currency.rates.USD_to_RWF) { %>
+                                        1 USD = <%= Math.round(currency.rates.USD_to_RWF).toLocaleString() %> RWF
+                                        <% } else { %>
+                                        Exchange rate loading...
+                                        <% } %>
+                                    <% } catch(err) { %>
+                                        Exchange rate unavailable
+                                    <% } %>
+                                </small>
+                            </li>
+                        </ul>
+                    </li>
+                    <% } %>
+                <% } catch(currencyError) { %>
+                    <!-- Currency selector unavailable -->
+                <% } %>
+                
+                <% if (user) { %>
+                    <!-- Notifications Bell -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">
+                                0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span>Notifications</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="markAllNotificationsRead()">
+                                    Mark All Read
+                                </button>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <div id="notificationsList">
+                                <li class="dropdown-item text-muted text-center">Loading notifications...</li>
+                            </div>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <% 
+                                // Generate user initials for avatar
+                                const initials = user.name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().slice(0, 2);
+                                const colorIndex = user.name.charCodeAt(0) % 9;
+                            %>
+                            <div class="profile-avatar avatar-sm me-2 profile-avatar-<%= colorIndex %>">
+                                <%= initials %>
+                            </div>
+                            <%= user.name %>
+                            <% if (user.balance && parseFloat(user.balance || 0) > 0) { %>
+                                <span class="badge bg-success balance-display ms-2" data-balance-usd="<%= user.balance %>">
+                                    $<%= parseFloat(user.balance || 0).toFixed(2) %>
+                                </span>
+                            <% } %>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/songs/upload">
+                                <i class="bi bi-cloud-upload"></i> Upload Song
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                                                <li class="nav-item">
+                            </li><a class="dropdown-item" href="/dashboard">
+                                Dashboard</a></li>
+                            <li><a class="dropdown-item" href="/users/purchased">
+                                <i class="bi bi-music-note-beamed"></i> My Purchased Songs
+                            </a></li>
+                            <li><a class="dropdown-item" href="/users/profile">
+                                <i class="bi bi-person"></i> My Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="/users/profile#earnings">
+                                <i class="bi bi-wallet2"></i> My Wallet
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login?redirectUrl=<%= encodeURIComponent(currentPath || '/') %>">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary ms-2" href="/register?redirectUrl=<%= encodeURIComponent(currentPath || '/') %>">
+                            Get Started
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<% if (user) { %>
+<script>
+// Notification functionality
+let notificationCheckInterval;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load notifications on page load
+    loadNotifications();
+    
+    // Check for new notifications every 30 seconds
+    notificationCheckInterval = setInterval(loadNotifications, 30000);
+});
+
+async function loadNotifications() {
+    try {
+        const response = await fetch('/api/notifications');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateNotificationUI(data.notifications);
+        }
+    } catch (error) {
+        console.error('Failed to load notifications:', error);
+    }
+}
+
+function updateNotificationUI(notifications) {
+    const badge = document.getElementById('notificationBadge');
+    const list = document.getElementById('notificationsList');
+    
+    if (!badge || !list) return;
+    
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+    
+    // Update badge
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'inline';
+    } else {
+        badge.style.display = 'none';
+    }
+    
+    // Update notification list
+    if (notifications.length === 0) {
+        list.innerHTML = '<li class="dropdown-item text-muted text-center">No notifications</li>';
+        return;
+    }
+    
+    list.innerHTML = notifications.slice(0, 5).map(notification => {
+        const timeAgo = formatTimeAgo(new Date(notification.created_at));
+        const typeIcon = getNotificationIcon(notification.type);
+        const readClass = notification.is_read ? 'text-muted' : '';
+        
+        return `
+            <li>
+                <a class="dropdown-item ${readClass}" href="#" onclick="markNotificationRead(${notification.id})">
+                    <div class="d-flex">
+                        <div class="me-2">
+                            <i class="bi ${typeIcon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="small">${notification.message}</div>
+                            <div class="text-muted small">${timeAgo}</div>
+                        </div>
+                        ${!notification.is_read ? '<div class="badge bg-primary rounded-pill">•</div>' : ''}
+                    </div>
+                </a>
+            </li>
+        `;
+    }).join('');
+    
+    // Add "View all notifications" link if there are more than 5
+    if (notifications.length > 5) {
+        list.innerHTML += '<li><hr class="dropdown-divider"></li><li><a class="dropdown-item text-center small" href="/users/notifications">View all notifications</a></li>';
+    }
+}
+
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'sale': return 'bi-cash-coin text-success';
+        case 'purchase': return 'bi-cart-check text-primary';
+        case 'withdrawal': return 'bi-bank text-warning';
+        case 'referral': return 'bi-share text-info';
+        case 'success': return 'bi-check-circle text-success';
+        case 'error': return 'bi-exclamation-triangle text-danger';
+        case 'warning': return 'bi-exclamation-triangle text-warning';
+        case 'info': return 'bi-info-circle text-info';
+        default: return 'bi-info-circle text-info';
+    }
+}
+
+function formatTimeAgo(date) {
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+}
+
+async function markNotificationRead(notificationId) {
+    try {
+        await fetch(`/api/notifications/${notificationId}/read`, { method: 'POST' });
+        loadNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Failed to mark notification as read:', error);
+    }
+}
+
+async function markAllNotificationsRead() {
+    try {
+        await fetch('/api/notifications/mark-all-read', { method: 'POST' });
+        loadNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Failed to mark all notifications as read:', error);
+    }
+}
+
+// Clean up interval when page unloads
+window.addEventListener('beforeunload', function() {
+    if (notificationCheckInterval) {
+        clearInterval(notificationCheckInterval);
+    }
+});
+</script>
+<% } %>

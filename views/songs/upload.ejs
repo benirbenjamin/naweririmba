@@ -1,0 +1,497 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-music-note-beamed"></i> Upload Your Song</h3>
+                </div>
+                <div class="card-body p-4">
+                    <% if (typeof error !== 'undefined' && error) { %>
+                        <div class="alert alert-danger">
+                            <%= error %>
+                        </div>
+                    <% } %>
+
+                    <!-- File Upload Section -->
+                    <div id="fileUploadSection" class="mb-5">
+                        <h4 class="mb-3"><i class="bi bi-cloud-upload"></i> Upload Audio File</h4>
+                        <div class="border-2 border-dashed border-primary rounded p-4 text-center" id="dropZone">
+                            <div id="dropZoneContent">
+                                <i class="bi bi-cloud-upload display-1 text-muted mb-3"></i>
+                                <h5>Drag & Drop your audio file here</h5>
+                                <p class="text-muted">or click to browse</p>
+                                <button type="button" class="btn btn-primary" id="chooseFileBtn">
+                                    <i class="bi bi-folder"></i> Choose File
+                                </button>
+                                <div class="mt-2">
+                                    <small class="text-muted">Supported: MP3, WAV, AAC, M4A, OGG, FLAC (Max: 50MB)</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden file input outside the form for drag/drop -->
+                        <input type="file" id="audioFileInput" accept=".mp3,.wav,.aac,.m4a,.ogg,.flac,.webm,audio/*" style="display: none;">
+                        
+                        <!-- File Selected Info -->
+                        <div id="fileSelectedInfo" class="mt-3" style="display: none;">
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle"></i>
+                                <strong>File Selected:</strong> <span id="selectedFileName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-2" id="removeFileBtn">
+                                    <i class="bi bi-x"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Preview Section -->
+                    <div id="audioPreviewSection" class="mb-5" style="display: none;">
+                        <h4 class="mb-3"><i class="bi bi-soundwave"></i> Audio Preview</h4>
+                        <div class="border rounded p-4">
+                            <audio id="audioPreview" controls class="w-100">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">Preview your audio before uploading</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Song Details Form -->
+                    <form id="uploadForm" action="/songs" method="POST" enctype="multipart/form-data">
+                        <h4 class="mb-3"><i class="bi bi-info-circle"></i> Song Details</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Song Title *</label>
+                                    <input type="text" class="form-control" name="title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Price (USD) *</label>
+                                    <input type="number" class="form-control" name="price" step="0.01" min="0.99" required>
+                                    <small class="form-text text-muted">Minimum price: $0.99</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Style *</label>
+                                    <select class="form-select" name="style" required>
+                                        <option value="">Select Style</option>
+                                        <option value="gospel">Gospel</option>
+                                        <option value="secular">Secular</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Genre *</label>
+                                    <select class="form-select" name="genre" required>
+                                        <option value="">Select Genre</option>
+                                        <!-- Gospel Genres -->
+                                        <optgroup label="Gospel Genres">
+                                            <option value="igisirimba">Igisirimba</option>
+                                            <option value="seben">Seben</option>
+                                            <option value="ikinimba">Ikinimba</option>
+                                           <option value="igisope">Igisope</option>
+                                            <option value="injyaruwa">Injyaruwa</option>
+                                            <option value="zouke">Zouke</option>
+                                            <option value="zulu">Zulu</option>
+                                            <option value="reggae">Reggae</option>
+                                            <option value="zulu_reggae">Zulu Reggae</option>
+                                            <option value="techno">Techno</option>
+                                            <option value="country">Country</option>
+                                            <option value="slow">Slow</option>
+                                            <option value="r&b">R&B</option>
+                                            <option value="pop">Pop</option>
+                                            <option value="other">Other style</option>
+                                        </optgroup>
+                                        <!-- Secular Genres -->
+                                        <optgroup label="Secular Genres">
+                                            <option value="afrobeat">Afrobeat</option>
+                                            <option value="hip_hop">Hip Hop</option>
+                                            <option value="jazz">Jazz</option>
+                                            <option value="blues">Blues</option>
+                                            <option value="rock">Rock</option>
+                                            <option value="electronic">Electronic</option>
+                                            <option value="folk">Folk</option>
+                                            <option value="world">World Music</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Song Lyrics *</label>
+                            <textarea class="form-control" name="lyrics" rows="6" required 
+                                placeholder="Enter the complete lyrics of your song here..."></textarea>
+                            <small class="form-text text-muted">Full lyrics will only be visible to buyers</small>
+                        </div>
+
+                        <!-- Preview Settings -->
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-clock"></i> Preview Settings</h5>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Preview Settings:</strong> Choose the best 45-second preview section of your song. This will be available on the homepage and browse page. If not specified, the first 45 seconds will be used.
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preview Start Time (seconds)</label>
+                                        <input type="number" class="form-control" name="preview_start_time" min="0" step="1" placeholder="0">
+                                        <small class="form-text text-muted">When to start the preview (default: 0)</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preview End Time (seconds)</label>
+                                        <input type="number" class="form-control" name="preview_end_time" min="30" step="1" placeholder="45">
+                                        <small class="form-text text-muted">When to end the preview (default: 45)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>Note:</strong> Preview duration must be between 30-60 seconds. Choose the most engaging part of your song!
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5" id="submitBtn" disabled>
+                                <span class="spinner-border spinner-border-sm me-2" role="status" style="display: none;"></span>
+                                <i class="bi bi-upload"></i> Upload Song
+                            </button>
+                        </div>
+
+                        <!-- Upload Progress -->
+                        <div id="uploadProgress" class="mt-4" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-primary">Uploading your song...</span>
+                                <span id="uploadProgressText">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadProgressBar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">Please don't close this window while uploading</small>
+                            </div>
+                        </div>
+
+                        <!-- Actual form file input -->
+                        <input type="file" name="audio" id="formAudioInput" accept=".mp3,.wav,.aac,.m4a,.ogg,.flac,.webm,audio/*" style="display: none;" required>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS for the upload page -->
+<style>
+    #dropZone.dragover {
+        background-color: #e7f3ff;
+        border-color: #0d6efd;
+        transform: scale(1.02);
+        transition: all 0.2s ease;
+    }
+    
+    #dropZone {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    #dropZone:hover {
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+    }
+    
+    .progress-bar {
+        transition: width 0.3s ease;
+    }
+    
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    audio {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .alert {
+        border-radius: 0.5rem;
+    }
+    
+    .card {
+        border-radius: 1rem;
+    }
+    
+    .card-header {
+        border-radius: 1rem 1rem 0 0 !important;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const audioFileInput = document.getElementById('audioFileInput'); // For drag/drop
+    const formAudioInput = document.getElementById('formAudioInput'); // For form submission
+    const chooseFileBtn = document.getElementById('chooseFileBtn');
+    const dropZone = document.getElementById('dropZone');
+    const fileSelectedInfo = document.getElementById('fileSelectedInfo');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const removeFileBtn = document.getElementById('removeFileBtn');
+    const audioPreviewSection = document.getElementById('audioPreviewSection');
+    const audioPreview = document.getElementById('audioPreview');
+    const submitBtn = document.getElementById('submitBtn');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    const uploadProgressText = document.getElementById('uploadProgressText');
+
+    let selectedFile = null;
+
+    // File selection handlers
+    chooseFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        audioFileInput.click();
+    });
+
+    // Only allow clicking on the button, not the whole drop zone
+    dropZone.addEventListener('click', (e) => {
+        if (e.target === chooseFileBtn || chooseFileBtn.contains(e.target)) {
+            return; // Let the button handle it
+        }
+        // Only open file dialog if clicking on empty space, not on selected file info
+        if (!fileSelectedInfo.style.display || fileSelectedInfo.style.display === 'none') {
+            audioFileInput.click();
+        }
+    });
+
+    // Drag and drop handlers
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Only remove dragover if we're leaving the drop zone entirely
+        if (!dropZone.contains(e.relatedTarget)) {
+            dropZone.classList.remove('dragover');
+        }
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelection(files[0]);
+        }
+    });
+
+    audioFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileSelection(e.target.files[0]);
+        }
+    });
+
+    function handleFileSelection(file) {
+        console.log('Handling file selection:', file);
+        console.log('File type:', file.type);
+        console.log('File name:', file.name);
+        
+        // Validate file type - be more flexible with MIME types
+        const fileExtension = file.name.toLowerCase().split('.').pop();
+        const allowedExtensions = ['mp3', 'wav', 'aac', 'm4a', 'flac', 'ogg', 'webm'];
+        
+        // Check extension first (more reliable than MIME type)
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert('Invalid file type. Please select an audio file (MP3, WAV, AAC, M4A, OGG, FLAC, WEBM).');
+            return;
+        }
+        
+        // Additional MIME type check - but be flexible
+        const isAudioMimeType = file.type.startsWith('audio/') || file.type === '' || file.type === 'application/octet-stream';
+        if (file.type && !isAudioMimeType) {
+            console.warn('Unexpected MIME type:', file.type, 'but extension is valid:', fileExtension);
+        }
+
+        // Validate file size (50MB)
+        if (file.size > 50 * 1024 * 1024) {
+            alert('File size too large. Please select a file smaller than 50MB.');
+            return;
+        }
+
+        selectedFile = file;
+        selectedFileName.textContent = file.name;
+        
+        // Set the file in the form input (this is crucial for form submission)
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        formAudioInput.files = dataTransfer.files;
+        
+        // Remove required attribute to prevent validation issues
+        formAudioInput.removeAttribute('required');
+        
+        // Show file selected info
+        fileSelectedInfo.style.display = 'block';
+        
+        // Clear any previous error messages
+        const existingErrors = audioPreviewSection.querySelectorAll('.alert-warning');
+        existingErrors.forEach(error => error.remove());
+        
+        // Create audio preview with better error handling
+        createAudioPreview(file);
+        
+        // Enable submit button
+        submitBtn.disabled = false;
+        
+        console.log('File selected successfully:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            formInputHasFile: formAudioInput.files.length > 0
+        });
+    }
+    
+    function createAudioPreview(file) {
+        try {
+            // Revoke previous URL if exists
+            if (audioPreview.src && audioPreview.src.startsWith('blob:')) {
+                URL.revokeObjectURL(audioPreview.src);
+            }
+            
+            const audioURL = URL.createObjectURL(file);
+            audioPreview.src = audioURL;
+            
+            // Reset any previous error states
+            audioPreview.style.display = 'block';
+            
+            audioPreview.onloadstart = function() {
+                console.log('Audio preview loading...');
+            };
+            
+            audioPreview.oncanplay = function() {
+                console.log('Audio preview ready to play');
+                audioPreviewSection.style.display = 'block';
+            };
+            
+            audioPreview.onerror = function(e) {
+                console.error('Audio preview error:', e);
+                console.log('File type:', file.type, 'File name:', file.name);
+                
+                // Hide the audio player but still allow upload
+                audioPreview.style.display = 'none';
+                audioPreviewSection.style.display = 'block';
+                
+                // Add a message instead of alert
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'alert alert-warning mt-2';
+                errorMsg.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Audio preview not available for this file type, but you can still upload it.';
+                audioPreviewSection.querySelector('.border').appendChild(errorMsg);
+            };
+            
+        } catch (error) {
+            console.error('Error creating audio preview:', error);
+            // Still show the preview section but with an error message
+            audioPreviewSection.style.display = 'block';
+            audioPreview.style.display = 'none';
+            
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'alert alert-warning mt-2';
+            errorMsg.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Audio preview not available, but you can still upload the file.';
+            audioPreviewSection.querySelector('.border').appendChild(errorMsg);
+        }
+    }
+
+    removeFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        selectedFile = null;
+        audioFileInput.value = '';
+        formAudioInput.value = '';
+        formAudioInput.setAttribute('required', 'required'); // Restore required attribute
+        fileSelectedInfo.style.display = 'none';
+        audioPreviewSection.style.display = 'none';
+        submitBtn.disabled = true;
+        
+        // Revoke the object URL to free memory
+        if (audioPreview.src && audioPreview.src.startsWith('blob:')) {
+            URL.revokeObjectURL(audioPreview.src);
+            audioPreview.src = '';
+        }
+        
+        // Remove any error messages
+        const errorMsgs = audioPreviewSection.querySelectorAll('.alert-warning');
+        errorMsgs.forEach(msg => msg.remove());
+        
+        console.log('File removed');
+    });
+
+    // Form submission handler
+    uploadForm.addEventListener('submit', function(e) {
+        console.log('Form submission started');
+        
+        // Check if file is selected
+        if (!formAudioInput.files || formAudioInput.files.length === 0) {
+            e.preventDefault();
+            alert('Please select an audio file first.');
+            return false;
+        }
+
+        // Validate form fields
+        const title = document.querySelector('input[name="title"]').value.trim();
+        const price = document.querySelector('input[name="price"]').value;
+        const style = document.querySelector('select[name="style"]').value;
+        const genre = document.querySelector('select[name="genre"]').value;
+        const lyrics = document.querySelector('textarea[name="lyrics"]').value.trim();
+
+        if (!title || !price || !style || !genre || !lyrics) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+            return false;
+        }
+        
+        // Remove the required attribute temporarily to prevent browser validation issues
+        formAudioInput.removeAttribute('required');
+
+        // Show upload progress
+        uploadProgress.style.display = 'block';
+        submitBtn.disabled = true;
+        submitBtn.querySelector('.spinner-border').style.display = 'inline-block';
+
+        console.log('Form validation passed, submitting...', {
+            file: formAudioInput.files[0],
+            title: title,
+            price: price,
+            style: style,
+            genre: genre
+        });
+
+        // Let the form submit normally
+        return true;
+    });
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', function() {
+        if (audioPreview.src && audioPreview.src.startsWith('blob:')) {
+            URL.revokeObjectURL(audioPreview.src);
+        }
+    });
+});
+</script>

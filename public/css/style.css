@@ -1,0 +1,949 @@
+/* Main styles */
+body {
+    padding-bottom: 60px; /* Reduced space for mobile navigation */
+    padding-top: 76px;
+}
+
+/* Logo Styles */
+.navbar-brand img,
+.footer img,
+.auth-logo {
+    transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.05);
+}
+
+.auth-logo {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Header */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    padding: 6px 0; /* Reduced padding */
+    z-index: 1000;
+    height: 55px; /* Fixed height */
+}
+
+.mobile-nav-item {
+    text-align: center;
+    padding: 5px; /* Reduced padding */
+    color: #666;
+    text-decoration: none;
+}
+
+.mobile-nav-item.active {
+    color: #0d6efd;
+}
+
+.mobile-nav-item i {
+    font-size: 1.2rem; /* Reduced icon size */
+    display: block;
+    margin-bottom: 1px; /* Reduced margin */
+}
+
+.mobile-nav-item span {
+    font-size: 0.7rem; /* Smaller text */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .mobile-nav {
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+    
+    /* Adjust body padding for mobile */
+    body {
+        padding-bottom: 55px; /* Match mobile nav height */
+    }
+}
+
+@media (max-width: 991.98px) {
+    body {
+        padding-bottom: 55px; /* Consistent mobile padding */
+    }
+}
+
+/* Card styles for songs */
+.song-card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.song-card:hover {
+    transform: translateY(-5px);
+}
+
+.song-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Audio Player Styles */
+.audio-player-fixed {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+    padding: 15px 20px;
+    z-index: 999; /* Below mobile nav */
+    transition: bottom 0.3s ease;
+    border-top: 3px solid #007bff;
+}
+
+.audio-player-fixed.show {
+    bottom: 0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .audio-player-fixed {
+        padding: 10px 15px;
+        z-index: 999; /* Below mobile nav */
+    }
+    
+    .audio-player-fixed.show {
+        bottom: 55px; /* Above mobile navigation */
+    }
+    
+    /* Ensure content doesn't get hidden behind both nav and audio player */
+    body.player-active {
+        padding-bottom: 120px; /* Mobile nav (55px) + audio player (~65px) */
+    }
+    
+    /* More compact mobile layout */
+    .hero-section {
+        min-height: calc(100vh - 120px); /* Account for both navs */
+    }
+    
+    .featured-songs-section {
+        padding-bottom: 120px; /* Extra space at bottom for mobile */
+    }
+};
+    right: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    transition: bottom 0.3s ease;
+    z-index: 1050;
+}
+
+.audio-player-fixed.show {
+    bottom: 0;
+}
+
+.player-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.song-info-player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 250px;
+}
+
+.player-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.song-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.song-title-player {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-artist-player {
+    font-size: 12px;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.control-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+.main-play-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+}
+
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.time {
+    font-size: 12px;
+    min-width: 35px;
+    text-align: center;
+}
+
+.progress-bar, .volume-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.progress-bar::-webkit-slider-thumb, .volume-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.progress-bar::-moz-range-thumb, .volume-bar::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.player-volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+.close-player {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.close-player:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* Song Card Enhancements */
+.song-cover {
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-card:hover .song-cover-img {
+    transform: scale(1.05);
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-card:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: #333;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.play-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.sold-badge {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.price-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(13, 110, 253, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sold-price {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.song-info {
+    padding: 20px;
+}
+
+.song-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.song-artist {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.genre-tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsive Audio Player */
+@media (max-width: 768px) {
+    .audio-player-fixed {
+        padding: 10px 15px;
+    }
+    
+    .player-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .song-info-player {
+        min-width: auto;
+        justify-content: center;
+    }
+    
+    .player-progress {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .player-volume {
+        display: none;
+    }
+    
+    .song-cover-img {
+        height: 200px;
+    }
+    
+    .play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}
+
+/* Song Details Page Styles */
+.song-detail-card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.song-cover-detail {
+    height: 100%;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-detail img {
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-cover-detail:hover img {
+    transform: scale(1.05);
+}
+
+.play-overlay-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-cover-detail:hover .play-overlay-detail {
+    opacity: 1;
+}
+
+.play-btn-detail {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    color: #333;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.play-btn-detail:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.status-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+}
+
+.sold-status {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.available-status {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.song-title-detail {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.artist-name-detail {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.song-tags {
+    margin: 1.5rem 0;
+}
+
+.price-display-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0d6efd;
+    line-height: 1;
+}
+
+.price-subtitle {
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.preview-section {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    border: 2px dashed #dee2e6;
+}
+
+.custom-audio-player audio {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.purchase-btn-detail {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.2s;
+}
+
+.purchase-btn-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.artist-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+}
+
+.contact-artist-btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: all 0.2s;
+}
+
+.contact-artist-btn:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+}
+
+.lyrics-section {
+    border-radius: 20px;
+}
+
+.lyrics-content {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    font-family: 'Georgia', serif;
+    line-height: 1.8;
+    color: #444;
+}
+
+.related-songs-section {
+    border-radius: 20px;
+}
+
+.related-song-item {
+    transition: all 0.2s;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.related-song-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.related-song-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* SVG Song Cover Styles */
+.song-cover-img svg,
+.card-img-top svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.song-cover svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.375rem;
+}
+
+.song-cover-detail svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+/* Responsive adjustments for song details */
+@media (max-width: 768px) {
+    .song-title-detail {
+        font-size: 2rem;
+    }
+    
+    .price-display-large {
+        font-size: 2.5rem;
+    }
+    
+    .song-cover-detail {
+        min-height: 300px;
+    }
+    
+    .play-btn-detail {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .purchase-btn-detail {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Dashboard Styles */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.avatar-sm {
+    width: 3rem;
+    height: 3rem;
+}
+
+.avatar-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1rem;
+}
+
+.bg-soft-light {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.song-card-mini {
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.song-card-mini:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.badge-sm {
+    font-size: 0.6em;
+}
+
+.list-group-item {
+    border-color: #e9ecef;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Wave Region Styles */
+.wavesurfer-region {
+    z-index: 3 !important;
+}
+
+.wavesurfer-region.region-too-short {
+    animation: flash-red 0.5s 2;
+}
+
+.wavesurfer-region.region-too-long {
+    animation: flash-yellow 0.5s 2;
+}
+
+@keyframes flash-red {
+    0%, 100% { background-color: rgba(255, 0, 0, 0.2); }
+    50% { background-color: rgba(255, 0, 0, 0.5); }
+}
+
+@keyframes flash-yellow {
+    0%, 100% { background-color: rgba(255, 193, 7, 0.2); }
+    50% { background-color: rgba(255, 193, 7, 0.5); }
+}
+
+/* Region Handles */
+.region-handle {
+    position: absolute;
+    width: 8px;
+    height: 100%;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 2px;
+    cursor: col-resize;
+    z-index: 10;
+}
+
+.region-handle.left {
+    left: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-left: 2px solid #fff;
+}
+
+.region-handle.right {
+    right: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-right: 2px solid #fff;
+}
+
+/* Region Time Markers */
+.region-time-marker {
+    position: absolute;
+    bottom: -20px;
+    background-color: #28a745;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 10px;
+    transform: translateX(-50%);
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.region-time-marker.start {
+    left: 0;
+}
+
+.region-time-marker.end {
+    right: 0;
+    transform: translateX(50%);
+}
+
+#currentPositionMarker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #dc3545;
+    z-index: 100;
+    display: none;
+}
+
+/* Pulsation effect for metronome indicators */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 0.2s ease-in-out;
+}
+
+/* Dashboard responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .avatar-sm {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* Admin Dropdown Submenu Styles */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+    display: none;
+    min-width: 200px;
+}
+
+.dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-item i {
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+/* Admin navbar styling */
+#adminDropdown {
+    font-weight: 500;
+}
+
+.dropdown-menu {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Authentication Form Loading States */
+.login-spinner,
+.register-spinner {
+    transition: opacity 0.2s ease;
+}
+
+#loginButton:disabled,
+#registerButton:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Auth form button loading animation */
+#loginButton .spinner-border,
+#registerButton .spinner-border {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mobile Navigation */

@@ -1,0 +1,333 @@
+<%- include('../layouts/main') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Dashboard</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/dashboard">
+                            <i class="bi bi-speedometer2"></i> Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/users/referrals">
+                            <i class="bi bi-share"></i> Referrals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/profile">
+                            <i class="bi bi-person"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/songs/upload">
+                            <i class="bi bi-cloud-upload"></i> Upload Song
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Referral System</h1>
+            </div>
+
+            <!-- Referral Stats -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Total Earnings</h5>
+                                    <h3 class="mb-0">$<%= parseFloat(totalEarnings || 0).toFixed(2) %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-currency-dollar fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Commission Rate</h5>
+                                    <h3 class="mb-0"><%= referralRate.toFixed(1) %>%</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-percent fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Total Referrals</h5>
+                                    <h3 class="mb-0"><%= referralEarnings.length %></h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-people fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>How Referrals Work
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">Share your songs and earn <%= referralRate.toFixed(1) %>% commission on every purchase made through your referral links!</p>
+                    <ul class="mb-0">
+                        <li>Generate unique referral links for any of your songs</li>
+                        <li>Share these links on social media, WhatsApp, or anywhere online</li>
+                        <li>When someone purchases through your link, you earn <%= referralRate.toFixed(1) %>% commission</li>
+                        <li>Commissions are added to your account balance immediately</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Referral Links for Your Songs -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-link-45deg me-2"></i>Your Referral Links
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <% if (userSongs.length === 0) { %>
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-music-note-beamed display-4 mb-3"></i>
+                            <p>You haven't uploaded any songs yet.</p>
+                            <a href="/songs/upload" class="btn btn-primary">Upload Your First Song</a>
+                        </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Song</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Referral Link</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% userSongs.forEach(song => { %>
+                                        <tr>
+                                            <td>
+                                                <strong><%= song.title %></strong>
+                                            </td>
+                                            <td>$<%= parseFloat(song.price).toFixed(2) %></td>
+                                            <td>
+                                                <% if (song.is_sold) { %>
+                                                    <span class="badge bg-secondary">Sold</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-success">Available</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (!song.is_sold) { %>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" 
+                                                               class="form-control" 
+                                                               id="link-<%= song.id %>"
+                                                               value="<%= baseUrl %>/songs/<%= song.id %>?ref=<%= user.id %>" 
+                                                               readonly>
+                                                        <button class="btn btn-outline-secondary" 
+                                                                type="button" 
+                                                                onclick="copyToClipboard('link-<%= song.id %>', this)">
+                                                            <i class="bi bi-clipboard"></i>
+                                                        </button>
+                                                    </div>
+                                                <% } else { %>
+                                                    <span class="text-muted">N/A</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (!song.is_sold) { %>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary" 
+                                                                onclick="shareOnWhatsApp('<%= song.id %>', '<%= song.title %>', '<%= song.price %>')">
+                                                            <i class="bi bi-whatsapp"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-info" 
+                                                                onclick="shareOnTwitter('<%= song.id %>', '<%= song.title %>', '<%= song.price %>')">
+                                                            <i class="bi bi-twitter"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-success" 
+                                                                onclick="shareGeneric('<%= song.id %>', '<%= song.title %>', '<%= song.price %>')">
+                                                            <i class="bi bi-share"></i>
+                                                        </button>
+                                                    </div>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Referral Earnings History -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Referral Earnings History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <% if (referralEarnings.length === 0) { %>
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-graph-up-arrow display-4 mb-3"></i>
+                            <p>No referral earnings yet. Start sharing your songs to earn commissions!</p>
+                        </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Song</th>
+                                        <th>Commission</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% referralEarnings.forEach(earning => { %>
+                                        <tr>
+                                            <td><%= new Date(earning.earned_at).toLocaleDateString() %></td>
+                                            <td><%= earning.song_title %></td>
+                                            <td class="text-success">
+                                                <strong>+$<%= parseFloat(earning.commission_amount).toFixed(2) %></strong>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(inputId, button) {
+    const input = document.getElementById(inputId);
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value);
+    
+    // Update button feedback
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-check"></i>';
+    button.classList.remove('btn-outline-secondary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalContent;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+function shareOnWhatsApp(songId, title, price) {
+    const url = `<%= baseUrl %>/songs/${songId}?ref=<%= user.id %>`;
+    const text = `Check out this amazing song "${title}" for just $${price}! 🎵\n\n${url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function shareOnTwitter(songId, title, price) {
+    const url = `<%= baseUrl %>/songs/${songId}?ref=<%= user.id %>`;
+    const text = `🎵 Check out "${title}" for just $${price}!`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+function shareGeneric(songId, title, price) {
+    const url = `<%= baseUrl %>/songs/${songId}?ref=<%= user.id %>`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: `${title} - Music for Sale`,
+            text: `Check out this amazing song "${title}" for just $${price}!`,
+            url: url
+        });
+    } else {
+        // Fallback to copying to clipboard
+        navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+    }
+}
+</script>
+
+<style>
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: static;
+        height: auto;
+        padding: 20px 0;
+    }
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.sidebar .nav-link.active {
+    color: #007bff;
+    background-color: rgba(0, 123, 255, .1);
+}
+
+.sidebar .nav-link:hover {
+    color: #007bff;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+}
+</style>

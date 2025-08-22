@@ -1,0 +1,835 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Main Song Card -->
+            <div class="card shadow-lg border-0 song-detail-card">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <div class="song-cover-detail position-relative">
+                            <% if (song.cover_image) { %>
+                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                     class="img-fluid h-100 w-100 object-cover" alt="<%= song.title %>"
+                                     onerror="this.onerror=null; this.src='/uploads/covers/default.svg'">
+                            <% } else { %>
+                                <img src="/uploads/covers/default.svg" 
+                                     class="img-fluid h-100 w-100 object-cover" alt="<%= song.title %>">
+                            <% } %>
+                            
+                            <!-- Play Button Overlay -->
+                            <% if (!song.is_sold) { %>
+                                <div class="play-overlay-detail">
+                                    <button class="play-btn-detail" 
+                                            onclick="playPreview('<%= song.id %>', '<%= song.title %>', '<%= song.artist_name %>', '/songs/<%= song.id %>/preview', '<% if (song.cover_image) { %>/uploads/covers/<%= song.cover_image %><% } else { %>/uploads/covers/default.svg<% } %>')">>
+                                        <i class="bi bi-play-fill"></i>
+                                    </button>
+                                </div>
+                            <% } %>
+                            
+                            <!-- Status Badge -->
+                            <% if (song.is_sold) { %>
+                                <div class="status-badge sold-status">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>SOLD</span>
+                                </div>
+                            <% } else { %>
+                                <div class="status-badge available-status">
+                                    <i class="bi bi-music-note"></i>
+                                    <span>AVAILABLE</span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-7">
+                        <div class="card-body p-4">
+                            <h1 class="song-title-detail mb-2"><%= song.title %></h1>
+                            <p class="artist-name-detail mb-3">by <%= song.artist_name %></p>
+                            
+                            <div class="song-tags mb-4">
+                                <span class="badge bg-primary me-2 fs-6"><%= song.style.toUpperCase() %></span>
+                                <span class="badge bg-secondary fs-6">
+                                    <%= song.genre.replace('_', ' ').replace(/(?:^|\s)\S/g, c => c.toUpperCase()) %>
+                                </span>
+                            </div>
+                            
+                            <% if (!song.is_sold) { %>
+                                <div class="price-section mb-4">
+                                    <div class="price-display-large price-display" data-price-usd="<%= song.price %>">
+                                        <%= currency.convert(song.price, currency.current) %>
+                                    </div>
+                                    <p class="price-subtitle">One-time purchase • Exclusive ownership</p>
+                                </div>
+                            <% } else { %>
+                                <div class="alert alert-info border-0 mb-4">
+                                    <h5 class="alert-heading">This song has been sold</h5>
+                                    <p class="mb-0">This unique song is no longer available for purchase.</p>
+                                </div>
+                            <% } %>
+
+                            <!-- Quick Preview Section -->
+                            <% if (song.preview_path) { %>
+                                <div class="preview-section mb-4">
+                                    <h6 class="fw-bold mb-3">
+                                        <i class="bi bi-headphones me-2"></i><%= hasPurchased ? 'Full Track' : 'Preview Track' %>
+                                    </h6>
+                                    <div class="custom-audio-player text-center p-3 bg-light rounded shadow-sm">
+                                        <!-- WaveSurfer.js container -->
+                                        <div id="waveform-container" class="mb-3" style="min-height: 80px;"></div>
+                                        <div id="waveform-loading" class="text-muted mb-2" style="display: none;">Loading...</div>
+                                        
+                                        <button id="waveform-play-btn" class="btn btn-primary btn-lg mb-2">
+                                            <i class="bi bi-play-fill"></i> Play <%= hasPurchased ? 'Full Track' : 'Preview' %>
+                                        </button>
+                                        
+                                        <% if (!hasPurchased) { %>
+                                            <div class="small text-muted">45-second preview only. Full song available after purchase.</div>
+                                        <% } else { %>
+                                            <div class="small text-success">
+                                                <i class="bi bi-check-circle me-1"></i>Full track access - you own this song!
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons mt-4">
+                                <% if (!song.is_sold && !hasPurchased) { %>
+                                    <% if (user) { %>
+                                    <button class="btn btn-primary btn-lg me-3 purchase-btn-detail" 
+                                            data-bs-toggle="modal" data-bs-target="#purchaseModal">
+                                        <i class="bi bi-cart-plus me-2"></i>Buy Now
+                                    </button>
+                                    <% } else { %>
+                                        <a href="/login?redirectUrl=<%= encodeURIComponent('/songs/' + song.id) %>" class="btn btn-primary btn-lg me-3">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i>Login or Buy as Guest
+                                        </a>
+                                    <% } %>
+                                <% } else if (hasPurchased) { %>
+                                    <div class="purchased-actions">
+                                        <a href="/songs/<%= song.id %>/download?token=<%= transactionId %>" class="btn btn-success btn-lg me-2 mb-2">
+                                            <i class="bi bi-download me-2"></i>Download Song
+                                        </a>
+                                        <a href="/songs/<%= song.id %>/lyrics-pdf?token=<%= transactionId %>" class="btn btn-outline-success btn-lg me-2 mb-2">
+                                            <i class="bi bi-file-earmark-pdf me-2"></i>Download Lyrics PDF
+                                        </a>
+                                        <div class="mt-2">
+                                            <span class="badge bg-success fs-6">
+                                                <i class="bi bi-check-circle me-1"></i>Purchased
+                                            </span>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <button class="btn btn-outline-secondary" onclick="shareSong('<%= song.title %>', '<%= song.artist_name %>')">
+                                    <i class="bi bi-share me-2"></i>Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lyrics Section -->
+            <div class="card shadow-lg border-0 mt-4 lyrics-section">
+                <div class="card-body p-4">
+                    <h4 class="mb-4">
+                        <i class="bi bi-file-text me-2"></i>Lyrics
+                    </h4>
+                    <% if (hasPurchased || (user && user.id === song.user_id)) { %>
+                        <div class="lyrics-content">
+                            <%= song.lyrics %>
+                        </div>
+                    <% } else { %>
+                        <div class="lyrics-preview">
+                            <div class="lyrics-content mb-4">
+                                <%= song.lyrics.substring(0, 200) %>...
+                            </div>
+                            <div class="text-center">
+                                <div class="alert alert-info border-0 mb-3">
+                                    <i class="bi bi-lock me-2"></i>
+                                    <strong>Full lyrics available after purchase</strong>
+                                    <p class="mb-0 mt-2">Get complete access to lyrics and download the full song</p>
+                                </div>
+                                <% if (!song.is_sold && user) { %>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#purchaseModal">
+                                        <i class="bi bi-unlock me-2"></i>Purchase to View Full Lyrics
+                                    </button>
+                                <% } else if (!user) { %>
+                                    <a href="/login?redirectUrl=<%= encodeURIComponent('/songs/' + song.id) %>" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Login to Purchase
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Artist Info -->
+            <div class="card shadow-lg border-0 artist-info-card mb-4">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=80&h=80&fit=crop&crop=center" 
+                             alt="Artist" class="rounded-circle" width="80" height="80">
+                    </div>
+                    <h5 class="mb-1">Artist</h5>
+                    <h4 class="mb-3"><%= song.artist_name %></h4>
+                    <% if (song.whatsapp) { %>
+                        <a href="https://wa.me/<%= song.whatsapp.replace(/\D/g, '') %>" 
+                           class="btn contact-artist-btn" target="_blank">
+                            <i class="bi bi-whatsapp me-2"></i>Contact Artist
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Song Stats -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-graph-up me-2"></i>Song Details
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <div class="h5 text-primary mb-1">
+                                    <i class="bi bi-calendar"></i>
+                                </div>
+                                <small class="text-muted">Uploaded</small>
+                                <div class="fw-bold">
+                                    <%= new Date(song.created_at).toLocaleDateString() %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <div class="h5 text-success mb-1">
+                                    <i class="bi bi-music-note-beamed"></i>
+                                </div>
+                                <small class="text-muted">Status</small>
+                                <div class="fw-bold">
+                                    <%= song.is_sold ? 'Sold' : 'Available' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Songs -->
+            <div class="card shadow-lg border-0 related-songs-section">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-music-note-list me-2"></i>More from this Artist
+                    </h6>
+                    
+                    <!-- Placeholder for related songs - would need backend support -->
+                    <div class="text-center py-4">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop" 
+                             alt="Coming Soon" class="rounded-circle mb-3" width="60" height="60">
+                        <p class="text-muted mb-3">More songs coming soon!</p>
+                        <a href="/songs" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-music-note-list me-1"></i>Browse All Songs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Song Stats -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5>Song Information</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Style:</strong> <%= song.style.charAt(0).toUpperCase() + song.style.slice(1) %></li>
+                        <li><strong>Genre:</strong> <%= song.genre.replace('_', ' ').replace(/(?:^|\s)\S/g, c => c.toUpperCase()) %></li>
+                        <li><strong>Price:</strong> 
+                            <span class="price-display" data-price-usd="<%= song.price %>">
+                                $<%= parseFloat(song.price).toFixed(2) %>
+                            </span>
+                        </li>
+                        <li><strong>Status:</strong> 
+                            <% if (song.is_sold) { %>
+                                <span class="text-danger">Sold</span>
+                            <% } else { %>
+                                <span class="text-success">Available</span>
+                            <% } %>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Purchase Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+        <h5 class="modal-title" id="purchaseModalLabel"><i class="bi bi-cart-plus me-2"></i>Buy "<%= song.title %>"</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="purchaseForm">
+          <input type="hidden" name="songId" value="<%= song.id %>" />
+          
+          <!-- Payment Method Selection -->
+          <div class="mb-4">
+            <label class="form-label">Payment Method</label>
+            <div class="row g-2">
+              <div class="col-12">
+                <div class="card p-3 border-primary">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="mb-1"><i class="bi bi-phone me-2 text-primary"></i>MTN Mobile Money</h6>
+                      <small class="text-muted">Pay with MTN MOMO</small>
+                    </div>
+                    <div class="text-end">
+                      <div class="h5 mb-0 text-primary"><%= Math.round(parseFloat(song.price) * currency.rates.USD_to_RWF).toLocaleString() %> RWF</div>
+                      <small class="text-muted">($<%= parseFloat(song.price).toFixed(2) %> USD)</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <% if (!user) { %>
+                    <div class="mb-3">
+              <label for="customerName" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="customerName" name="customerName" required />
+                    </div>
+                    <div class="mb-3">
+              <label for="customerEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="customerEmail" name="customerEmail" required />
+                    </div>
+            <div class="mb-3">
+              <label for="senderPhone" class="form-label">Your Phone Number (MTN MOMO)</label>
+              <input type="tel" class="form-control" id="senderPhone" name="senderPhone" placeholder="078xxxxxxx" required />
+            </div>
+            <div class="mb-3">
+              <label for="senderName" class="form-label">Name on MOMO Account</label>
+              <input type="text" class="form-control" id="senderName" name="senderName" required />
+            </div>
+          <% } else { %>
+            <input type="hidden" name="customerName" value="<%= user.name %>" />
+            <input type="hidden" name="customerEmail" value="<%= user.email %>" />
+            <div class="mb-3">
+              <label for="senderPhone" class="form-label">Your Phone Number (MTN MOMO)</label>
+              <input type="tel" class="form-control" id="senderPhone" name="senderPhone" placeholder="078xxxxxxx" value="<%= user.whatsapp || '' %>" required />
+            </div>
+            <div class="mb-3">
+              <label for="senderName" class="form-label">Name on MOMO Account</label>
+              <input type="text" class="form-control" id="senderName" name="senderName" value="<%= user.name %>" required />
+            </div>
+            <div class="mb-3">
+              <div class="alert alert-info mb-0">
+                <i class="bi bi-person-circle me-2"></i>Purchasing as <strong><%= user.name %></strong> (<%= user.email %>)
+              </div>
+            </div>
+          <% } %>
+          <div id="purchaseError" class="alert alert-danger d-none"></div>
+          <button type="submit" class="btn btn-primary w-100" id="purchaseSubmitBtn">
+            <span class="spinner-border spinner-border-sm d-none" id="purchaseSpinner" role="status"></span>
+            <i class="bi bi-phone me-2"></i>Pay with MOMO
+          </button>
+        </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- MOMO Payment Instructions Modal -->
+<div class="modal fade" id="momoInstructionsModal" tabindex="-1" aria-labelledby="momoInstructionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="momoInstructionsModalLabel">
+                    <i class="bi bi-phone me-2"></i>Complete Your MOMO Payment
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-phone text-primary" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">Payment Instructions:</h6>
+                    <ol class="mb-0">
+                        <li>Dial <strong>*182*7*1#</strong> on your MTN phone</li>
+                        <li>Send <strong><span id="momoAmount"></span></strong> to <strong>672747</strong></li>
+                        <li>Recipient name: <strong>Benjamin</strong></li>
+                        <li>Complete the transaction</li>
+                        <li>Click the WhatsApp button below to notify us</li>
+                    </ol>
+                </div>
+                
+                <div class="bg-light p-3 rounded mb-4">
+                    <h6>Transaction Details:</h6>
+                    <p class="mb-1"><strong>Amount:</strong> <span id="momoAmountDisplay"></span></p>
+                    <p class="mb-1"><strong>Song:</strong> <%= song.title %></p>
+                    <p class="mb-0"><strong>Reference:</strong> <span id="momoReference"></span></p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-success" onclick="contactAdminWhatsApp()">
+                        <i class="bi bi-whatsapp me-2"></i>Contact Admin on WhatsApp
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        I'll contact later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables for MOMO payment
+let currentTransactionRef = '';
+let currentAmountRWF = 0;
+
+// Process MOMO payment
+function processMomoPayment() {
+    const form = document.getElementById('purchaseForm');
+    const formData = new FormData(form);
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const purchaseError = document.getElementById('purchaseError');
+    const purchaseSubmitBtn = document.getElementById('purchaseSubmitBtn');
+    const purchaseSpinner = document.getElementById('purchaseSpinner');
+    
+    purchaseError.classList.add('d-none');
+    purchaseSpinner.classList.remove('d-none');
+    purchaseSubmitBtn.disabled = true;
+    
+    // Get form data with fallbacks for logged-in users
+    const customerEmail = formData.get('customerEmail') || '<%= user ? user.email : "" %>';
+    const customerName = formData.get('customerName') || '<%= user ? user.name : "" %>';
+    const senderPhone = formData.get('senderPhone');
+    const senderName = formData.get('senderName');
+    
+    console.log('Form data:', { customerEmail, customerName, senderPhone, senderName }); // Debug log
+    
+    const data = {
+        songId: '<%= song.id %>',
+        customerEmail: customerEmail,
+        customerName: customerName,
+        senderPhone: senderPhone,
+        senderName: senderName
+    };
+    
+    console.log('Sending MOMO payment data:', data); // Debug log
+    
+    fetch('/payment/momo/initialize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Store transaction details
+            currentTransactionRef = result.transactionRef;
+            currentAmountRWF = parseInt(result.rwfAmount.replace(/[^\d]/g, ''));
+            
+            // Update MOMO instructions modal
+            document.getElementById('momoAmount').textContent = result.rwfAmount;
+            document.getElementById('momoAmountDisplay').textContent = result.rwfAmount;
+            document.getElementById('momoReference').textContent = currentTransactionRef;
+            
+            // Hide purchase modal and show instructions
+            bootstrap.Modal.getInstance(document.getElementById('purchaseModal')).hide();
+            new bootstrap.Modal(document.getElementById('momoInstructionsModal')).show();
+        } else {
+            purchaseError.textContent = result.error || 'Failed to create MOMO transaction.';
+            purchaseError.classList.remove('d-none');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        purchaseError.textContent = 'Payment initialization failed. Please try again.';
+        purchaseError.classList.remove('d-none');
+    })
+    .finally(() => {
+        purchaseSpinner.classList.add('d-none');
+        purchaseSubmitBtn.disabled = false;
+    });
+}
+
+// Generate WhatsApp message for admin
+function generateWhatsAppMessage() {
+    const message = `Hello! I have completed a MOMO payment for the song "<%= song.title %>" by <%= song.artist_name %>.
+
+Payment Details:
+- Amount: ${currentAmountRWF.toLocaleString()} RWF
+- Transaction Reference: ${currentTransactionRef}
+- Song: <%= song.title %>
+- Artist: <%= song.artist_name %>
+
+Please confirm my payment so I can download the song.
+
+Thank you!`;
+    
+    return encodeURIComponent(message);
+}
+
+// Contact admin via WhatsApp
+function contactAdminWhatsApp() {
+    const message = generateWhatsAppMessage();
+    const whatsappUrl = `https://wa.me/250783987223?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Share song function
+function shareSong(title, artist) {
+    if (navigator.share) {
+        navigator.share({
+            title: `${title} by ${artist}`,
+            text: `Check out this unique song: ${title} by ${artist} on Nawe Ririmba Space`,
+            url: window.location.href
+        });
+    } else {
+        // Fallback - copy to clipboard
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Song link copied to clipboard!');
+        }).catch(() => {
+            prompt('Copy this link to share:', url);
+        });
+    }
+}
+
+// Global function for main audio player
+function playPreview(songId, title, artist, previewPath, coverUrl) {
+    // Check if we have a local waveform player
+    if (window.currentWaveformPlayer) {
+        window.currentWaveformPlayer.toggle();
+    } else if (typeof audioPlayer !== 'undefined') {
+        // Fallback to global audio player (from homepage)
+        audioPlayer.loadSong(songId, title, artist, previewPath, coverUrl);
+    } else {
+        // Last fallback: try to find and play local audio element
+        const localAudio = document.getElementById('localAudio');
+        if (localAudio) {
+            localAudio.play();
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize WaveSurfer.js player for preview/full track
+    // Always initialize the player - it will use the preview route even if preview_path is null
+    var audioUrl = '<%= hasPurchased ? `/songs/${song.id}/full-stream` : `/songs/${song.id}/preview` %>';
+    var waveformPlayer = initWaveformPlayer(audioUrl, {
+        isPreviewMode: <%= hasPurchased ? false : true %>,
+        hasPurchased: <%= hasPurchased ? true : false %>,
+        previewDuration: 40  // STRICT: 40 seconds max preview
+    });
+    
+    // Store globally for cleanup
+    window.currentWaveformPlayer = waveformPlayer;
+    
+    // Setup purchase form handler
+    const purchaseForm = document.getElementById('purchaseForm');
+    if (purchaseForm) {
+        purchaseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            processMomoPayment();
+        });
+    }
+});
+</script>
+
+<style>
+.song-detail-card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.song-cover-detail {
+    height: 100%;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-detail img {
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-cover-detail:hover img {
+    transform: scale(1.05);
+}
+
+.play-overlay-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-cover-detail:hover .play-overlay-detail {
+    opacity: 1;
+}
+
+.play-btn-detail {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    color: #333;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.play-btn-detail:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.status-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+}
+
+.sold-status {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.available-status {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.song-title-detail {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.artist-name-detail {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.song-tags {
+    margin: 1.5rem 0;
+}
+
+.price-display-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0d6efd;
+    line-height: 1;
+}
+
+.price-subtitle {
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.preview-section {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    border: 2px dashed #dee2e6;
+}
+
+.custom-audio-player audio {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.purchase-btn-detail {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.2s;
+}
+
+.purchase-btn-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.artist-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+}
+
+.contact-artist-btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: all 0.2s;
+}
+
+.contact-artist-btn:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+}
+
+.lyrics-section {
+    border-radius: 20px;
+}
+
+.lyrics-content {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    font-family: 'Georgia', serif;
+    line-height: 1.8;
+    color: #444;
+}
+
+.related-songs-section {
+    border-radius: 20px;
+}
+
+.related-song-item {
+    transition: all 0.2s;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.related-song-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.related-song-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* WaveSurfer Player Styles */
+#waveform-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    position: relative;
+}
+
+.preview-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dc3545;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.preview-marker::after {
+    content: 'Preview Limit';
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.preview-limit-message {
+    animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.purchased-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .song-title-detail {
+        font-size: 2rem;
+    }
+    
+    .price-display-large {
+        font-size: 2.5rem;
+    }
+    
+    .song-cover-detail {
+        min-height: 300px;
+    }
+    
+    .play-btn-detail {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .purchase-btn-detail {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>

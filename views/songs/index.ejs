@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Filters</h5>
+                    <form id="filterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <select class="form-select" name="genre">
+                                <option value="">All Genres</option>
+                                <option value="rock">Rock</option>
+                                <option value="pop">Pop</option>
+                                <option value="jazz">Jazz</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price Range</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="minPrice" placeholder="Min">
+                                <input type="number" class="form-control" name="maxPrice" placeholder="Max">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row g-4" id="songsList">
+                <% songs.forEach(song => { %>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card song-card h-100">
+                            <% if (song.cover_image) { %>
+                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                     class="card-img-top" alt="<%= song.title %> Cover"
+                                     onerror="this.onerror=null; this.src='/uploads/covers/default.svg'">
+                            <% } else { %>
+                                <img src="/uploads/covers/default.svg" 
+                                     class="card-img-top" alt="<%= song.title %> Cover">
+                            <% } %>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= song.title %></h5>
+                                <p class="card-text">By <%= song.artist_name %></p>
+                                <p class="card-text"><small class="text-muted">$<%= song.price %></small></p>
+                                <a href="/songs/<%= song.id %>" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</div>

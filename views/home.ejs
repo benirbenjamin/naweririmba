@@ -1,0 +1,2127 @@
+<!-- Hero Section with Background -->
+<div class="hero-section">
+    <div class="hero-overlay">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <h1 class="display-3 fw-bold text-white mb-4">
+                        Nawe Ririmba Space
+                    </h1>
+                    <h2 class="h4 text-white-75 mb-4">
+                        Where Unique Songs Find Their Perfect Owners
+                    </h2>
+                    <p class="lead text-white-75 mb-4">
+                        Discover exclusive music that's sold only once. Each song is a unique digital collectible waiting for its perfect owner.
+                    </p>
+                    <% if (typeof user === 'undefined' || !user) { %>
+                        <div class="hero-actions">
+                            <a href="/register" class="btn btn-light btn-lg me-3 px-4">
+                                <i class="bi bi-person-plus"></i> Get Started
+                            </a>
+                            <a href="/login" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </div>
+                    <% } else { %>
+                        <div class="hero-actions">
+                            <a href="/songs/upload" class="btn btn-light btn-lg me-3 px-4">
+                                <i class="bi bi-upload"></i> Upload Your Song
+                            </a>
+                            <a href="/songs" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-music-note-list"></i> Browse Songs
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image text-center">
+                        <div class="image-stack">
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&crop=center" 
+                                 alt="Music Studio" class="img-fluid rounded-circle shadow-lg hero-img-main">
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop&crop=center" 
+                                 alt="Headphones" class="hero-img-floating floating-1">
+                            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=150&h=150&fit=crop&crop=center" 
+                                 alt="Vinyl Record" class="hero-img-floating floating-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section py-5 bg-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-primary"><%= (stats.available_songs || 0) + (stats.sold_songs || 0) %></div>
+                    <div class="stat-label">Songs Uploaded</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-success"><%= stats.sold_songs || 0 %></div>
+                    <div class="stat-label">Songs Sold</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-info"><%= stats.total_artists || 0 %></div>
+                    <div class="stat-label">Active Artists</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item">
+                    <div class="stat-number text-warning"><%= stats.total_sales || 0 %></div>
+                    <div class="stat-label">Total Sales</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Songs Section -->
+<div class="featured-songs-section py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Featured Songs</h2>
+                <p class="lead text-muted">Discover unique music from talented artists</p>
+            </div>
+        </div>
+        
+        <% if (typeof featuredSongs !== 'undefined' && featuredSongs && featuredSongs.length > 0) { %>
+            <div class="row g-4">
+                <% featuredSongs.forEach(function(song) { %>
+                    <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                        <div class="song-card position-relative">
+                            <!-- Cover Image -->
+                            <div class="song-cover position-relative">
+                                <% if (song.cover_image) { %>
+                                    <img src="/uploads/covers/<%= song.cover_image %>" 
+                                         class="card-img-top song-cover-img" alt="<%= song.title %>"
+                                         onerror="this.onerror=null; this.src='/uploads/covers/default.svg'">
+                                <% } else { %>
+                                    <img src="/uploads/covers/default.svg" 
+                                         class="card-img-top song-cover-img" alt="<%= song.title %>">
+                                <% } %>
+                                
+                                <!-- Play Button Overlay -->
+                                <div class="play-overlay">
+                                    <% if (!song.is_sold) { %>
+                                        <button class="play-btn" 
+                                                onclick="playPreview('<%= song.id %>', '<%= song.title %>', '<%= song.artist_name %>', '/songs/<%= song.id %>/preview', '<% if (song.cover_image) { %>/uploads/covers/<%= song.cover_image %><% } else { %>/uploads/covers/default.svg<% } %>')"
+                                                data-song-id="<%= song.id %>">
+                                            <i class="bi bi-play-fill"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <div class="sold-badge">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>SOLD</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                
+                                <!-- Price Badge -->
+                                <div class="price-badge">
+                                    <% if (!song.is_sold) { %>
+                                        <span class="price-display" data-price-usd="<%= song.price %>">
+                                            <%= currency.convert(song.price, currency.current) %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="sold-price">SOLD</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <!-- Song Info -->
+                            <div class="song-info">
+                                <h5 class="song-title"><%= song.title %></h5>
+                                <p class="song-artist">by <%= song.artist_name %></p>
+                                <div class="song-genre">
+                                    <span class="genre-tag <%= song.style %>">
+                                        <%= song.genre.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+                                    </span>
+                                    <span class="style-tag">
+                                        <%= song.style.charAt(0).toUpperCase() + song.style.slice(1) %>
+                                    </span>
+                                </div>
+                                
+                                <div class="song-actions mt-3">
+                                    <a href="/songs/<%= song.id %>" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                    <% if (!song.is_sold) { %>
+                                        <% if (user) { %>
+                                            <button class="btn btn-primary btn-sm purchase-btn" 
+                                                    data-song-id="<%= song.id %>"
+                                                    data-price="<%= song.price %>"
+                                                    data-title="<%= song.title %>"
+                                                    data-artist="<%= song.artist_name %>">
+                                                <i class="bi bi-cart-plus"></i> Buy
+                                            </button>
+                                        <% } else { %>
+                                            <a href="/login" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-cart-plus"></i> Login to Buy
+                                            </a>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="empty-state text-center py-5">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=200&fit=crop" 
+                     alt="No songs" class="img-fluid mb-4 rounded">
+                <h3>No songs available yet</h3>
+                <p class="text-muted mb-4">Be the first to upload a unique song to our platform!</p>
+                <% if (user) { %>
+                    <a href="/songs/upload" class="btn btn-primary btn-lg">
+                        <i class="bi bi-upload"></i> Upload Your First Song
+                    </a>
+                <% } else { %>
+                    <a href="/register" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> Join to Upload
+                    </a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section py-5 bg-white">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Why Choose Nawe Ririmba?</h2>
+                <p class="lead text-muted">The future of music ownership is here</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop&crop=center" 
+                             alt="Unique Music" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Unique Ownership</h4>
+                    <p class="text-muted">Each song is sold only once, making it truly exclusive to its owner. Own a piece of music history that no one else can have.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop&crop=center" 
+                             alt="High Quality" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Premium Quality</h4>
+                    <p class="text-muted">Experience crystal-clear audio with our high-quality recordings. Every beat, every note delivered in pristine condition.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=100&h=100&fit=crop&crop=center" 
+                             alt="Direct Connection" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Artist Connection</h4>
+                    <p class="text-muted">Connect directly with artists through our platform. Get behind-the-scenes insights and build meaningful relationships.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=center" 
+                             alt="Secure Payments" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Secure Payments</h4>
+                    <p class="text-muted">Safe and secure transactions with Flutterwave integration. Multiple currency support for global accessibility.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=100&h=100&fit=crop&crop=center" 
+                             alt="Easy Upload" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Easy Upload</h4>
+                    <p class="text-muted">Upload your music with our intuitive interface. Professional tools for audio editing and preview creation included.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop&crop=center" 
+                             alt="Global Reach" class="rounded-circle feature-img">
+                    </div>
+                    <h4 class="fw-bold mb-3">Global Reach</h4>
+                    <p class="text-muted">Reach music lovers worldwide. Our platform connects artists and collectors from every corner of the globe.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (typeof user === 'undefined' || !user) { %>
+<!-- Call to Action Section -->
+<div class="cta-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-3">Ready to Start Your Musical Journey?</h2>
+                <p class="lead mb-4">Join thousands of artists and music lovers who have discovered the future of music ownership.</p>
+                <div class="cta-actions">
+                    <a href="/register" class="btn btn-primary btn-lg me-3 px-4">
+                        <i class="bi bi-person-plus"></i> Join Now - It's Free
+                    </a>
+                    <a href="/login" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="bi bi-box-arrow-in-right"></i> Already a Member?
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop" 
+                     alt="Join Us" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<!-- Purchase Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseModalLabel">
+                    <i class="bi bi-cart-check"></i> Purchase Song
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="song-purchase-info">
+                    <div class="d-flex align-items-center mb-3">
+                        <img id="purchaseCover" src="" alt="Song Cover" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div>
+                            <h6 id="purchaseTitle" class="mb-1"></h6>
+                            <small id="purchaseArtist" class="text-muted"></small>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Display -->
+                    <div class="mb-4 text-center">
+                        <div class="price-display bg-primary text-white p-3 rounded">
+                            <h4 class="mb-0" id="purchasePriceRWF">0 RWF</h4>
+                            <small>Payment Amount</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Money Payment Info -->
+                    <div class="payment-method-info bg-light p-3 rounded mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="bi bi-phone"></i> Mobile Money Payment (MTN)
+                        </h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>MOMO Code:</strong><br>
+                                <span class="badge bg-primary fs-6">672747</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Account Name:</strong><br>
+                                <span class="text-dark">Benjamin</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Instructions:</strong> Send the exact amount shown above to the MOMO code, then fill your details below and click submit.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Payment Form -->
+                <form id="momoPaymentForm">
+                    <% if (!user) { %>
+                        <div class="mb-3">
+                            <label for="customerName" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="customerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerEmail" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="customerEmail" required>
+                        </div>
+                    <% } %>
+                    
+                    <div class="mb-3">
+                        <label for="senderPhone" class="form-label">Your Phone Number (used to send money) *</label>
+                        <input type="tel" class="form-control" id="senderPhone" placeholder="e.g., 0788123456" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="senderName" class="form-label">Names on MOMO Account *</label>
+                        <input type="text" class="form-control" id="senderName" placeholder="Full names as registered on your MOMO account" required>
+                    </div>
+                </form>
+                
+                <div class="purchase-benefits mb-3">
+                    <h6>What you'll get:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle text-success me-2"></i>High-quality audio download</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Complete song lyrics</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Exclusive ownership rights</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Direct artist contact</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <div class="btn-group w-100">
+                    <button type="button" class="btn btn-primary" id="proceedToMomo">
+                        <i class="bi bi-phone"></i> Submit Payment Details
+                    </button>
+                    <button type="button" class="btn btn-outline-success" id="contactAdmin">
+                        <i class="bi bi-whatsapp"></i> Contact Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Genre Sections -->
+<% if (typeof gospelSongs !== 'undefined' && gospelSongs && gospelSongs.length > 0) { %>
+<div class="genre-section py-5 bg-white">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="fw-bold mb-2">Gospel Music</h3>
+                        <p class="text-muted mb-0">Inspirational songs that uplift the soul</p>
+                    </div>
+                    <a href="/songs?style=gospel" class="btn btn-outline-primary">
+                        View All Gospel <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <% gospelSongs.slice(0, 4).forEach(function(song) { %>
+                <div class="col-lg-3 col-md-6">
+                    <div class="song-card-small">
+                        <div class="song-cover-small position-relative">
+                            <% if (song.cover_image) { %>
+                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                     class="song-cover-img-small" alt="<%= song.title %>"
+                                     onerror="this.src='/uploads/covers/default.svg'">
+                            <% } else { %>
+                                <img src="/uploads/covers/default.svg" 
+                                     class="song-cover-img-small" alt="<%= song.title %>">
+                            <% } %>
+                            
+                            <div class="play-overlay-small">
+                                <% if (!song.is_sold) { %>
+                                    <button class="play-btn-small" 
+                                            onclick="playPreview('<%= song.id %>', '<%= song.title %>', '<%= song.artist_name %>', '/songs/<%= song.id %>/preview', '<% if (song.cover_image) { %>/uploads/covers/<%= song.cover_image %><% } else { %>/uploads/covers/default.svg<% } %>')"
+                                            data-song-id="<%= song.id %>">
+                                        <i class="bi bi-play-fill"></i>
+                                    </button>
+                                <% } else { %>
+                                    <div class="sold-badge-small">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>SOLD</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="price-badge-small">
+                                <% if (!song.is_sold) { %>
+                                    <span class="price-display" data-price-usd="<%= song.price %>">
+                                        <%= currency.convert(song.price, currency.current) %>
+                                    </span>
+                                <% } else { %>
+                                    SOLD
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div class="song-info-small">
+                            <h6 class="song-title-small"><%= song.title %></h6>
+                            <p class="song-artist-small">by <%= song.artist_name %></p>
+                            <a href="/songs/<%= song.id %>" class="btn btn-sm btn-outline-primary w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<% if (typeof secularSongs !== 'undefined' && secularSongs && secularSongs.length > 0) { %>
+<div class="genre-section py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="fw-bold mb-2">Secular Music</h3>
+                        <p class="text-muted mb-0">Contemporary beats and modern rhythms</p>
+                    </div>
+                    <a href="/songs?style=secular" class="btn btn-outline-primary">
+                        View All Secular <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <% secularSongs.slice(0, 4).forEach(function(song) { %>
+                <div class="col-lg-3 col-md-6">
+                    <div class="song-card-small">
+                        <div class="song-cover-small position-relative">
+                            <% if (song.cover_image) { %>
+                                <img src="/uploads/covers/<%= song.cover_image %>" 
+                                     class="song-cover-img-small" alt="<%= song.title %>"
+                                     onerror="this.src='/uploads/covers/default.svg'">
+                            <% } else { %>
+                                <img src="/uploads/covers/default.svg" 
+                                     class="song-cover-img-small" alt="<%= song.title %>">
+                            <% } %>
+                            
+                            <div class="play-overlay-small">
+                                <% if (!song.is_sold) { %>
+                                    <button class="play-btn-small" 
+                                            onclick="playPreview('<%= song.id %>', '<%= song.title %>', '<%= song.artist_name %>', '/songs/<%= song.id %>/preview', '<% if (song.cover_image) { %>/uploads/covers/<%= song.cover_image %><% } else { %>/uploads/covers/default.svg<% } %>')"
+                                            data-song-id="<%= song.id %>">
+                                        <i class="bi bi-play-fill"></i>
+                                    </button>
+                                <% } else { %>
+                                    <div class="sold-badge-small">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>SOLD</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="price-badge-small">
+                                <% if (!song.is_sold) { %>
+                                    <span class="price-display" data-price-usd="<%= song.price %>">
+                                        <%= currency.convert(song.price, currency.current) %>
+                                    </span>
+                                <% } else { %>
+                                    SOLD
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div class="song-info-small">
+                            <h6 class="song-title-small"><%= song.title %></h6>
+                            <p class="song-artist-small">by <%= song.artist_name %></p>
+                            <a href="/songs/<%= song.id %>" class="btn btn-sm btn-outline-primary w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<!-- Custom Styles -->
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 80vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop') center/cover;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+    padding: 80px 0;
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-actions .btn {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.hero-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.image-stack {
+    position: relative;
+    display: inline-block;
+}
+
+.hero-img-main {
+    width: 300px;
+    height: 300px;
+    border: 5px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease;
+}
+
+.hero-img-main:hover {
+    transform: scale(1.05);
+}
+
+.hero-img-floating {
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.floating-1 {
+    top: 20px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-2 {
+    bottom: 40px;
+    left: -40px;
+    width: 100px;
+    height: 100px;
+    animation: float 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Stats Section */
+.stats-section {
+    background: #fff;
+}
+
+.stat-item {
+    padding: 20px;
+    transition: transform 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Featured Songs */
+.featured-songs-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Song Card Enhancements */
+.song-cover {
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-card:hover .song-cover-img {
+    transform: scale(1.05);
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Strict Preview Controls Styles */
+.disabled-preview {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+.disabled-preview:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.progress-bar-preview-disabled {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+    background: linear-gradient(90deg, #dc3545 0%, #dc3545 100%) !important;
+}
+
+.preview-exhausted-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(220, 53, 69, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #dc3545;
+    font-weight: bold;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.waveform-container.preview-mode {
+    position: relative;
+}
+
+.waveform-container.preview-mode::after {
+    content: 'PREVIEW MODE - Seeking Disabled';
+    position: absolute;
+    top: -25px;
+    left: 0;
+    font-size: 11px;
+    color: #ffc107;
+    font-weight: bold;
+    background: rgba(255, 193, 7, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #ffc107;
+}
+
+#audioPlayer.preview-exhausted {
+    border-color: #dc3545;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+}
+
+#audioPlayer.preview-exhausted .player-info {
+    opacity: 0.7;
+}
+
+.audio-player-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    max-width: 350px;
+    z-index: 10001;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Mobile responsive adjustments for notifications */
+@media (max-width: 768px) {
+    .audio-player-notification {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        top: 80px;
+    }
+    
+    .waveform-container.preview-mode::after {
+        font-size: 10px;
+        top: -20px;
+    }
+}
+
+.song-card:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: #333;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.play-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.sold-badge {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.price-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(13, 110, 253, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sold-price {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.song-info {
+    padding: 20px;
+}
+
+.song-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.song-artist {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.genre-tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Features Section */
+.features-section {
+    background: #fff;
+}
+
+.feature-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.feature-img {
+    width: 80px;
+    height: 80px;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-img {
+    transform: scale(1.1);
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.cta-actions .btn {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cta-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Audio Player Fixed */
+.audio-player-fixed {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+    padding: 12px 15px; /* Reduced padding */
+    z-index: 999; /* Lower than mobile nav */
+    transition: bottom 0.3s ease;
+    border-top: 3px solid #007bff;
+}
+
+.audio-player-fixed.show {
+    bottom: 55px; /* Above mobile navigation */
+}
+
+.player-content {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Reduced gap */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.song-info-player {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Reduced gap */
+    min-width: 180px; /* Reduced width */
+    flex: 1;
+}
+
+.player-cover {
+    width: 40px; /* Smaller cover */
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.song-title-player {
+    font-weight: 600;
+    font-size: 0.9rem; /* Smaller text */
+    color: #333;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Limit width */
+}
+
+.song-artist-player {
+    font-size: 0.75rem; /* Smaller text */
+    color: #666;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Limit width */
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .audio-player-fixed {
+        padding: 8px 10px; /* Even more compact on mobile */
+    }
+    
+    .audio-player-fixed.show {
+        bottom: 55px; /* Above mobile nav */
+    }
+    
+    .player-content {
+        gap: 8px;
+    }
+    
+    .song-info-player {
+        gap: 8px;
+        min-width: 120px;
+    }
+    
+    .player-cover {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .song-title-player {
+        font-size: 0.8rem;
+        max-width: 100px;
+    }
+    
+    .song-artist-player {
+        font-size: 0.7rem;
+        max-width: 100px;
+    }
+    
+    .player-controls {
+        gap: 5px;
+    }
+    
+    .control-btn {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 0.9rem;
+    }
+    
+    .main-play-btn {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .player-time {
+        font-size: 0.7rem;
+        min-width: 60px;
+    }
+}
+
+.song-title-player {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.song-artist-player {
+    font-size: 12px;
+    color: #666;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.control-btn:hover {
+    color: #007bff;
+    background: #f8f9fa;
+}
+
+.main-play-btn {
+    font-size: 24px;
+    color: #007bff;
+}
+
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.progress-bar::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.time {
+    font-size: 12px;
+    color: #666;
+    min-width: 35px;
+}
+
+.player-volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+.volume-bar {
+    width: 80px;
+    height: 3px;
+    background: #e9ecef;
+    border-radius: 2px;
+    outline: none;
+}
+
+.volume-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.close-player {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-player:hover {
+    color: #dc3545;
+    background: #f8f9fa;
+}
+
+/* Small Song Cards for Genre Sections */
+.song-card-small {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.song-card-small:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.song-cover-small {
+    position: relative;
+    overflow: hidden;
+}
+
+.song-cover-img-small {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.song-card-small:hover .song-cover-img-small {
+    transform: scale(1.05);
+}
+
+.play-overlay-small {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-card-small:hover .play-overlay-small {
+    opacity: 1;
+}
+
+.play-btn-small {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: #333;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.play-btn-small:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.sold-badge-small {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.price-badge-small {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(13, 110, 253, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.price-badge-small .sold-price {
+    background: rgba(220, 53, 69, 0.9);
+    padding: 4px 8px;
+    border-radius: 10px;
+}
+
+.song-info-small {
+    padding: 15px;
+}
+
+.song-title-small {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+}
+
+.song-artist-small {
+    color: #666;
+    margin-bottom: 12px;
+    font-size: 12px;
+}
+
+.song-actions-small {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-xs {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-xs i {
+    font-size: 10px;
+}
+
+/* Genre Section Styling */
+.genre-section {
+    border-top: 1px solid #e9ecef;
+}
+
+.genre-section h3 {
+    color: #333;
+    position: relative;
+}
+
+.genre-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+</style>
+
+<!-- Fixed Audio Player -->
+<div id="audioPlayer" class="audio-player-fixed">
+    <div class="player-content">
+        <div class="song-info-player">
+            <img id="playerCover" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=50&h=50&fit=crop" 
+                 alt="Album Cover" class="player-cover">
+            <div class="song-details">
+                <div id="playerTitle" class="song-title-player">Select a song</div>
+                <div id="playerArtist" class="song-artist-player">Tap any song above</div>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button id="prevBtn" class="control-btn">
+                <i class="bi bi-skip-backward-fill"></i>
+            </button>
+            <button id="playPauseBtn" class="control-btn main-play-btn">
+                <i class="bi bi-play-fill"></i>
+            </button>
+            <button id="nextBtn" class="control-btn">
+                <i class="bi bi-skip-forward-fill"></i>
+            </button>
+        </div>
+        
+        <div class="player-progress">
+            <span id="currentTime" class="time">0:00</span>
+            <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
+            <span id="duration" class="time">0:00</span>
+        </div>
+        
+        <div class="player-volume">
+            <i class="bi bi-volume-up"></i>
+            <input type="range" id="volumeBar" class="volume-bar" min="0" max="100" value="80">
+        </div>
+        
+        <button id="closePlayer" class="close-player">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <audio id="audioElement" preload="metadata"></audio>
+</div>
+
+<script>
+// Global audio player functionality
+class AudioPlayer {
+    constructor() {
+        this.audio = document.getElementById('audioElement');
+        this.playPauseBtn = document.getElementById('playPauseBtn');
+        this.progressBar = document.getElementById('progressBar');
+        this.volumeBar = document.getElementById('volumeBar');
+        this.currentTimeEl = document.getElementById('currentTime');
+        this.durationEl = document.getElementById('duration');
+        this.playerEl = document.getElementById('audioPlayer');
+        this.closeBtn = document.getElementById('closePlayer');
+        
+        this.currentSong = null;
+        this.isPlaying = false;
+        this.previewDurationLimit = 40; // STRICT: Maximum preview duration is now 40 seconds
+        this.isPreviewMode = true; // Assume preview mode by default
+        this.isPreviewExhausted = false; // Track if preview time has been exhausted
+        this.totalPreviewTime = 0; // Track total time listened in preview mode
+        this.lastCurrentTime = 0; // Track last audio time to prevent jumping
+        this.sessionPlayCount = 0; // Track how many times user tried to play this song
+        this.maxSessionPlays = 3; // Allow only 1 play session per song load
+        
+        this.init();
+    }
+    
+    init() {
+        // Play/Pause button
+        this.playPauseBtn.addEventListener('click', () => {
+            this.togglePlay();
+        });
+        
+        // Progress bar - STRICT CONTROLS: Disable clicking/seeking in preview mode
+        this.progressBar.addEventListener('mousedown', (e) => {
+            if (this.isPreviewMode) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showPreviewRestrictedMessage();
+                return false;
+            }
+        });
+        
+        this.progressBar.addEventListener('touchstart', (e) => {
+            if (this.isPreviewMode) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showPreviewRestrictedMessage();
+                return false;
+            }
+        });
+        
+        this.progressBar.addEventListener('input', (e) => {
+            if (this.isPreviewMode) {
+                // STRICT: Prevent any seeking in preview mode
+                e.preventDefault();
+                e.stopPropagation();
+                this.progressBar.value = (this.audio.currentTime / this.previewDurationLimit) * 100;
+                this.showPreviewRestrictedMessage();
+                return false;
+            }
+            
+            // Only allow seeking in full version
+            const time = (this.progressBar.value / 100) * this.audio.duration;
+            this.audio.currentTime = time;
+        });
+        
+        // Volume control
+        this.volumeBar.addEventListener('input', () => {
+            this.audio.volume = this.volumeBar.value / 100;
+        });
+        
+        // Close player
+        this.closeBtn.addEventListener('click', () => {
+            this.closePlayer();
+        });
+        
+        // Audio events
+        this.audio.addEventListener('loadedmetadata', () => {
+            // In preview mode, show preview duration, otherwise show full duration
+            if (this.isPreviewMode) {
+                const displayDuration = Math.min(this.audio.duration, this.previewDurationLimit);
+                this.durationEl.textContent = this.formatTime(displayDuration);
+                
+                // STRICT: Disable progress bar interaction in preview mode
+                this.progressBar.style.pointerEvents = 'none';
+                this.progressBar.style.cursor = 'not-allowed';
+                this.progressBar.title = 'Seeking disabled in preview mode';
+            } else {
+                this.durationEl.textContent = this.formatTime(this.audio.duration);
+                this.progressBar.style.pointerEvents = 'auto';
+                this.progressBar.style.cursor = 'pointer';
+                this.progressBar.title = 'Click to seek';
+            }
+        });
+        
+        this.audio.addEventListener('timeupdate', () => {
+            if (this.audio.duration) {
+                // STRICT: Prevent time jumping in preview mode
+                if (this.isPreviewMode) {
+                    const currentTime = this.audio.currentTime;
+                    
+                    // Check for suspicious time jumps (seeking attempts)
+                    if (Math.abs(currentTime - this.lastCurrentTime) > 2 && this.lastCurrentTime > 0) {
+                        // Reset to last known position if jump detected
+                        this.audio.currentTime = Math.min(this.lastCurrentTime, this.previewDurationLimit);
+                        this.showPreviewRestrictedMessage();
+                        return;
+                    }
+                    
+                    // Update last known time
+                    this.lastCurrentTime = currentTime;
+                    
+                    // Track total preview time
+                    if (this.isPlaying) {
+                        this.totalPreviewTime += 0.1;
+                    }
+                }
+                
+                // Calculate progress based on preview mode
+                let progress;
+                if (this.isPreviewMode) {
+                    progress = (this.audio.currentTime / this.previewDurationLimit) * 100;
+                    progress = Math.min(progress, 100);
+                } else {
+                    progress = (this.audio.currentTime / this.audio.duration) * 100;
+                }
+                
+                this.progressBar.value = progress;
+                this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+                
+                // STRICT: Enforce preview duration limit
+                if (this.isPreviewMode && (this.audio.currentTime >= this.previewDurationLimit || this.totalPreviewTime >= this.previewDurationLimit)) {
+                    this.isPreviewExhausted = true;
+                    this.pause();
+                    this.audio.currentTime = this.previewDurationLimit;
+                    this.progressBar.value = 100;
+                    
+                    // STRICT: Disable play button permanently after preview exhaustion
+                    this.disablePlayButton();
+                    this.showPreviewExhaustedMessage();
+                }
+            }
+        });
+        
+        this.audio.addEventListener('ended', () => {
+            this.isPlaying = false;
+            this.updatePlayButton();
+        });
+        
+        this.audio.addEventListener('play', () => {
+            this.isPlaying = true;
+            this.updatePlayButton();
+        });
+        
+        this.audio.addEventListener('pause', () => {
+            this.isPlaying = false;
+            this.updatePlayButton();
+        });
+        
+        // STRICT: Prevent right-click on audio element to disable download attempts
+        this.audio.addEventListener('contextmenu', (e) => {
+            if (this.isPreviewMode) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Set initial volume
+        this.audio.volume = 0.8;
+    }
+    
+    loadSong(songId, title, artist, previewPath, coverUrl) {
+        this.currentSong = { songId, title, artist, previewPath, coverUrl };
+        
+        // Determine if this is preview mode (assume true unless it's a full stream)
+        this.isPreviewMode = !previewPath.includes('/full-stream');
+        
+        // Reset preview tracking
+        this.isPreviewExhausted = false;
+        this.totalPreviewTime = 0;
+        this.lastCurrentTime = 0;
+        this.sessionPlayCount = 0; // STRICT: Reset session play count for new song
+        
+        // STRICT: Re-enable play button for new song
+        this.enablePlayButton();
+        
+        // Update UI
+        document.getElementById('playerTitle').textContent = title;
+        document.getElementById('playerArtist').textContent = `by ${artist}`;
+        document.getElementById('playerCover').src = coverUrl;
+        
+        // Ensure preview path is absolute and works in production
+        let audioSrc = previewPath;
+        if (!audioSrc.startsWith('http')) {
+            // Make sure the path is absolute
+            audioSrc = window.location.origin + (audioSrc.startsWith('/') ? audioSrc : '/' + audioSrc);
+        }
+        
+        console.log('Loading audio from:', audioSrc); // Debug log
+        console.log('Preview mode:', this.isPreviewMode); // Debug log
+        
+        // Load audio
+        this.audio.src = audioSrc;
+        this.audio.load();
+        
+        // Show player
+        this.playerEl.classList.add('show');
+        document.body.classList.add('player-active'); // Add class for mobile spacing
+        
+        // Auto play (with user interaction check for mobile browsers)
+        this.play();
+    }
+    
+    play() {
+        if (this.currentSong) {
+            // STRICT: Check if preview is exhausted in preview mode
+            if (this.isPreviewMode && this.isPreviewExhausted) {
+                this.showPreviewExhaustedMessage();
+                return;
+            }
+            
+            // STRICT: Increment session play count for preview mode
+            if (this.isPreviewMode && !this.isPlaying) {
+                this.sessionPlayCount++;
+            }
+            
+            // Add error handling for production
+            this.audio.play().catch(error => {
+                console.error('Error playing audio:', error);
+                // Try to reload the audio if it fails
+                if (error.name === 'NotAllowedError') {
+                    console.log('Audio play was blocked by browser policy');
+                    // Show a notification to user that they need to click play manually
+                    alert('Please click the play button to start the audio');
+                } else if (error.name === 'NotSupportedError') {
+                    console.log('Audio format not supported');
+                    alert('Audio format not supported by your browser');
+                } else {
+                    // Try reloading the audio
+                    console.log('Attempting to reload audio...');
+                    this.audio.load();
+                }
+            });
+        }
+    }
+    
+    pause() {
+        this.audio.pause();
+    }
+    
+    togglePlay() {
+        if (this.isPlaying) {
+            this.pause();
+        } else {
+            // STRICT: Check if preview has been exhausted
+            if (this.isPreviewMode && this.isPreviewExhausted) {
+                this.showPreviewExhaustedMessage();
+                return;
+            }
+            
+            // STRICT: Check session play count for preview mode
+            if (this.isPreviewMode && this.sessionPlayCount >= this.maxSessionPlays) {
+                this.showMaxPlaysReachedMessage();
+                return;
+            }
+            
+            this.play();
+        }
+    }
+    
+    updatePlayButton() {
+        const icon = this.playPauseBtn.querySelector('i');
+        if (this.isPlaying) {
+            icon.className = 'bi bi-pause-fill';
+        } else {
+            icon.className = 'bi bi-play-fill';
+        }
+    }
+    
+    closePlayer() {
+        this.pause();
+        this.playerEl.classList.remove('show');
+        document.body.classList.remove('player-active'); // Remove class for mobile spacing
+        this.currentSong = null;
+        
+        // Reset preview tracking
+        this.isPreviewExhausted = false;
+        this.totalPreviewTime = 0;
+        
+        // Reset UI
+        document.getElementById('playerTitle').textContent = 'Select a song';
+        document.getElementById('playerArtist').textContent = 'Tap any song above';
+        document.getElementById('playerCover').src = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=50&h=50&fit=crop';
+        this.progressBar.value = 0;
+        this.currentTimeEl.textContent = '0:00';
+        this.durationEl.textContent = '0:00';
+    }
+    
+    formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    showPreviewEndMessage() {
+        if (this.currentSong) {
+            // Create or update a preview end notification
+            let notification = document.getElementById('previewEndNotification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.id = 'previewEndNotification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #007bff;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 14px;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                document.body.appendChild(notification);
+            }
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="bi bi-music-note-beamed"></i>
+                    <div>
+                        <div style="font-weight: 600;">Preview ended</div>
+                        <div style="font-size: 12px; opacity: 0.9;">Purchase to hear the full song</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: auto;">×</button>
+                </div>
+            `;
+            
+            // Show notification
+            notification.style.opacity = '1';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                if (notification && notification.parentElement) {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification && notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+    }
+    
+    disablePlayButton() {
+        // STRICT: Permanently disable play button after preview exhaustion
+        this.playPauseBtn.disabled = true;
+        this.playPauseBtn.style.opacity = '0.5';
+        this.playPauseBtn.style.cursor = 'not-allowed';
+        this.playPauseBtn.title = 'Preview time exhausted. Purchase to continue listening.';
+        
+        // Update button text
+        const icon = this.playPauseBtn.querySelector('i');
+        icon.className = 'bi bi-lock-fill';
+        
+        // Add disabled class for additional styling
+        this.playPauseBtn.classList.add('disabled-preview');
+    }
+    
+    enablePlayButton() {
+        // Re-enable play button (used when loading new songs)
+        this.playPauseBtn.disabled = false;
+        this.playPauseBtn.style.opacity = '1';
+        this.playPauseBtn.style.cursor = 'pointer';
+        this.playPauseBtn.title = 'Play/Pause';
+        this.playPauseBtn.classList.remove('disabled-preview');
+    }
+    
+    showPreviewRestrictedMessage() {
+        // Show message when user tries to seek in preview mode
+        this.showTemporaryMessage('Seeking is disabled in preview mode. Purchase the song for full control.', 'warning');
+    }
+    
+    showPreviewExhaustedMessage() {
+        // Show message when preview time is exhausted
+        this.showTemporaryMessage('Preview time exhausted! Purchase this song to continue listening and get full access.', 'info');
+    }
+    
+    showTemporaryMessage(text, type = 'info') {
+        // Create temporary notification
+        let notification = document.getElementById('audioPlayerNotification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'audioPlayerNotification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 350px;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                color: white;
+            `;
+            document.body.appendChild(notification);
+        }
+        
+        // Set background color based on type
+        const colors = {
+            info: '#007bff',
+            warning: '#ffc107',
+            error: '#dc3545',
+            success: '#28a745'
+        };
+        
+        notification.style.background = colors[type] || colors.info;
+        
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'x-circle' : 'info-circle'}"></i>
+                <div>
+                    <div style="font-weight: 600;">${text}</div>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: auto;">×</button>
+            </div>
+        `;
+        
+        // Show notification
+        notification.style.opacity = '1';
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            if (notification && notification.parentElement) {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification && notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+    
+    showPreviewExhaustedMessage() {
+        if (this.currentSong) {
+            // Create or update a preview exhausted notification
+            let notification = document.getElementById('previewExhaustedNotification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.id = 'previewExhaustedNotification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #dc3545;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    z-index: 10000;
+                    max-width: 350px;
+                    font-size: 14px;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                document.body.appendChild(notification);
+            }
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="bi bi-stop-circle"></i>
+                    <div>
+                        <div style="font-weight: 600;">Preview Time Exhausted</div>
+                        <div style="font-size: 12px; opacity: 0.9;">You've heard the full 45-second preview. Purchase to continue listening!</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: auto;">×</button>
+                </div>
+            `;
+            
+            // Show notification
+            notification.style.opacity = '1';
+            
+            // Auto hide after 8 seconds
+            setTimeout(() => {
+                if (notification && notification.parentElement) {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if (notification && notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 8000);
+        }
+    }
+    
+    showMaxPlaysReachedMessage() {
+        // Show message when maximum preview plays reached
+        this.showTemporaryMessage('You have reached the maximum preview plays for this song. Purchase to listen unlimited times!', 'warning');
+    }
+    
+    showPreviewRestrictedMessage() {
+        // Show message when user tries to seek in preview mode
+        this.showTemporaryMessage('Seeking is disabled in preview mode. Purchase the song for full control!', 'warning');
+    }
+}
+
+// Initialize audio player
+const audioPlayer = new AudioPlayer();
+
+// Global function to play preview (called from song cards)
+function playPreview(songId, title, artist, previewPath, coverUrl) {
+    audioPlayer.loadSong(songId, title, artist, previewPath, coverUrl);
+}
+
+// Purchase functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Purchase button click handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.purchase-btn')) {
+            const btn = e.target.closest('.purchase-btn');
+            const songId = btn.dataset.songId;
+            const price = btn.dataset.price;
+            const title = btn.dataset.title;
+            const artist = btn.dataset.artist;
+            
+            showPurchaseModal(songId, price, title, artist);
+        }
+    });
+    
+    // MOMO payment submission button
+    document.getElementById('proceedToMomo')?.addEventListener('click', function() {
+        processMomoPayment();
+    });
+    
+    // Contact admin button
+    document.getElementById('contactAdmin')?.addEventListener('click', function() {
+        contactAdminWhatsApp();
+    });
+});
+
+async function showPurchaseModal(songId, price, title, artist) {
+    // Update modal content
+    document.getElementById('purchaseTitle').textContent = title;
+    document.getElementById('purchaseArtist').textContent = `by ${artist}`;
+    
+    // Set cover image (try to find the actual cover from the song card)
+    const songCard = document.querySelector(`[data-song-id="${songId}"]`).closest('.song-card');
+    const coverImg = songCard ? songCard.querySelector('.song-cover-img') : null;
+    const coverSrc = coverImg ? coverImg.src : '/uploads/covers/default.svg';
+    document.getElementById('purchaseCover').src = coverSrc;
+    
+    // Store song data for purchase
+    const modal = document.getElementById('purchaseModal');
+    modal.dataset.songId = songId;
+    modal.dataset.price = price;
+    modal.dataset.title = title;
+    modal.dataset.artist = artist;
+    
+    // Convert USD price to RWF
+    await updateModalPrice(price);
+    
+    // Show modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+async function updateModalPrice(priceUSD) {
+    try {
+        // Convert to RWF
+        const response = await fetch(`/api/convert/${priceUSD}/USD/RWF`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const priceRWF = Math.round(result.converted_amount);
+            document.getElementById('purchasePriceRWF').textContent = `${priceRWF.toLocaleString()} RWF`;
+        } else {
+            // Fallback to approximate conversion if API fails
+            const priceRWF = Math.round(priceUSD * 1400); // Approximate rate
+            document.getElementById('purchasePriceRWF').textContent = `${priceRWF.toLocaleString()} RWF`;
+        }
+    } catch (error) {
+        console.error('Error updating modal price:', error);
+        // Fallback price
+        const priceRWF = Math.round(priceUSD * 1400);
+        document.getElementById('purchasePriceRWF').textContent = `${priceRWF.toLocaleString()} RWF`;
+    }
+}
+
+async function processMomoPayment() {
+    const modal = document.getElementById('purchaseModal');
+    const songId = modal.dataset.songId;
+    const price = modal.dataset.price;
+    const title = modal.dataset.title;
+    const artist = modal.dataset.artist;
+    
+    // Validate form
+    const form = document.getElementById('momoPaymentForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    let customerData = {};
+    
+    // Check if user is logged in
+    const isLoggedIn = <%= user ? 'true' : 'false' %>;
+    
+    if (!isLoggedIn) {
+        customerData = {
+            customerName: document.getElementById('customerName').value,
+            customerEmail: document.getElementById('customerEmail').value
+        };
+    } else {
+        customerData = {
+            customerName: '<%= user ? user.name.replace(/'/g, "\\'") : "" %>',
+            customerEmail: '<%= user ? user.email : "" %>'
+        };
+    }
+    
+    // Get MOMO payment details
+    const senderPhone = document.getElementById('senderPhone').value;
+    const senderName = document.getElementById('senderName').value;
+    
+    try {
+        // Show loading state
+        const proceedBtn = document.getElementById('proceedToMomo');
+        const originalText = proceedBtn.innerHTML;
+        proceedBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating transaction...';
+        proceedBtn.disabled = true;
+        
+        // Create MOMO transaction
+        const response = await fetch('/payment/momo/initialize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                songId: songId,
+                senderPhone: senderPhone,
+                senderName: senderName,
+                ...customerData
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Redirect to WhatsApp with payment details
+            const whatsappMessage = generateWhatsAppMessage(title, artist, senderPhone, senderName, result.rwfAmount, result.transactionRef);
+            window.open(whatsappMessage, '_blank');
+            
+            // Close modal and show success message
+            const bsModal = bootstrap.Modal.getInstance(modal);
+            bsModal.hide();
+            
+            // Show success notification
+            showSuccessNotification('Transaction created! Please complete payment via WhatsApp.');
+        } else {
+            throw new Error(result.error || 'Failed to create transaction');
+        }
+    } catch (error) {
+        console.error('MOMO payment error:', error);
+        alert('Transaction creation failed: ' + error.message);
+        
+        // Reset button
+        document.getElementById('proceedToMomo').innerHTML = '<i class="bi bi-phone"></i> Submit Payment Details';
+        document.getElementById('proceedToMomo').disabled = false;
+    }
+}
+
+function generateWhatsAppMessage(title, artist, senderPhone, senderName, amount, transactionRef) {
+    const adminPhone = '250783987223'; // WhatsApp number with country code
+    const message = `Hello! I want to purchase a song:
+
+🎵 *Song Details:*
+- Title: ${title}
+- Artist: ${artist}
+- Amount: ${amount} RWF
+- Transaction ID: ${transactionRef}
+
+💰 *Payment Details:*
+- My Phone: ${senderPhone}
+- My Names: ${senderName}
+- Payment Method: MTN Mobile Money
+- Recipient: 672747 (Benjamin)
+
+I have sent the payment and would like to receive the song download link.
+
+Song Link: ${window.location.origin}/songs/${songId}`;
+
+    return `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+}
+
+function contactAdminWhatsApp() {
+    const adminPhone = '250783987223';
+    const message = 'Hello! I need help with purchasing a song on Naweririmba platform.';
+    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function showSuccessNotification(message) {
+    // Create success notification
+    let notification = document.getElementById('successNotification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'successNotification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            max-width: 350px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+    }
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="bi bi-check-circle"></i>
+            <div>
+                <div style="font-weight: 600;">Success!</div>
+                <div style="font-size: 12px; opacity: 0.9;">${message}</div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" 
+                    style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: auto;">×</button>
+        </div>
+    `;
+    
+    // Show notification
+    notification.style.opacity = '1';
+    
+    // Auto hide after 6 seconds
+    setTimeout(() => {
+        if (notification && notification.parentElement) {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                if (notification && notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 6000);
+}
+</script>

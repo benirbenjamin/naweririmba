@@ -1,0 +1,198 @@
+<nav class="navbar fixed-bottom bg-white border-top d-block d-lg-none shadow-lg">
+    <div class="container-fluid px-2">
+        <div class="row w-100 text-center g-0">
+            <div class="col">
+                <a href="/" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                    <i class="bi bi-house fs-6 mb-1"></i>
+                    <small class="text-muted" style="font-size: 0.7rem;">Home</small>
+                </a>
+            </div>
+            <div class="col">
+                <a href="/songs" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                    <i class="bi bi-music-note-list fs-6 mb-1"></i>
+                    <small class="text-muted" style="font-size: 0.7rem;">Browse</small>
+                </a>
+            </div>
+            <% if (user) { %>
+                <div class="col">
+                    <a href="/songs/upload" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mb-1" style="width: 28px; height: 28px;">
+                            <i class="bi bi-plus fs-6"></i>
+                        </div>
+                        <small class="text-primary fw-semibold" style="font-size: 0.7rem;">Upload</small>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/users/dashboard" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                        <i class="bi bi-speedometer2 fs-6 mb-1"></i>
+                        <small class="text-muted" style="font-size: 0.7rem;">Dashboard</small>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/users/purchased" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                        <i class="bi bi-music-note-beamed fs-6 mb-1"></i>
+                        <small class="text-muted" style="font-size: 0.7rem;">My Songs</small>
+                    </a>
+                </div>
+            <% } else { %>
+                <div class="col">
+                    <a href="/login?redirectUrl=<%= encodeURIComponent(currentPath || '/') %>" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mb-1" style="width: 28px; height: 28px;">
+                            <i class="bi bi-box-arrow-in-right" style="font-size: 0.8rem;"></i>
+                        </div>
+                        <small class="text-success fw-semibold" style="font-size: 0.7rem;">Login</small>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/register?redirectUrl=<%= encodeURIComponent(currentPath || '/') %>" class="mobile-nav-item text-decoration-none d-flex flex-column align-items-center py-1">
+                        <i class="bi bi-person-plus fs-6 mb-1"></i>
+                        <small class="text-muted" style="font-size: 0.7rem;">Register</small>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .mobile-nav-item {
+        transition: all 0.3s ease;
+        position: relative;
+        color: #6c757d;
+    }
+    
+    .mobile-nav-item:hover {
+        transform: translateY(-3px);
+        color: #0d6efd !important;
+    }
+    
+    .mobile-nav-item:hover i {
+        color: #0d6efd !important;
+        transform: scale(1.1);
+    }
+    
+    .mobile-nav-item:hover small {
+        color: #0d6efd !important;
+        font-weight: 600;
+    }
+    
+    .mobile-nav-item.active i {
+        color: #0d6efd !important;
+    }
+    
+    .mobile-nav-item.active small {
+        color: #0d6efd !important;
+        font-weight: 600 !important;
+    }
+    
+    .mobile-nav-item i {
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-nav-item small {
+        transition: all 0.3s ease;
+        font-size: 0.75rem;
+    }
+    
+    /* Enhanced bottom navigation */
+    .navbar.fixed-bottom {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1030;
+    }
+    
+    /* Add padding to body to account for fixed bottom navbar */
+    body {
+        padding-bottom: 85px;
+    }
+    
+    @media (min-width: 992px) {
+        body {
+            padding-bottom: 0;
+        }
+    }
+    
+    /* Active page indicator */
+    .mobile-nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background-color: #0d6efd;
+        border-radius: 50%;
+    }
+    
+    /* Ripple effect on tap */
+    .mobile-nav-item:active {
+        transform: scale(0.95);
+    }
+    
+    /* Improved circular buttons for upload and login */
+    .mobile-nav-item .rounded-circle {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .mobile-nav-item:hover .rounded-circle {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Safe area support for devices with notches */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        .navbar.fixed-bottom {
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+        }
+        
+        body {
+            padding-bottom: calc(85px + env(safe-area-inset-bottom));
+        }
+        
+        @media (min-width: 992px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get current page path
+        const currentPath = window.location.pathname;
+        
+        // Find all mobile nav items
+        const navItems = document.querySelectorAll('.mobile-nav-item');
+        
+        // Remove existing active classes
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        // Add active class to current page nav item
+        navItems.forEach(item => {
+            const href = item.getAttribute('href');
+            
+            // Exact match for home page
+            if (currentPath === '/' && href === '/') {
+                item.classList.add('active');
+            }
+            // For other pages, check if current path starts with the href
+            else if (currentPath !== '/' && href !== '/' && currentPath.startsWith(href)) {
+                item.classList.add('active');
+            }
+        });
+        
+        // Add haptic feedback on touch devices (if supported)
+        navItems.forEach(item => {
+            item.addEventListener('touchstart', function() {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(50); // Light haptic feedback
+                }
+            });
+        });
+    });
+</script>

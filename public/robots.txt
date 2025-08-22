@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+# Important pages for Benix Space and Nawe Ririmba ranking
+Allow: /
+Allow: /home
+Allow: /songs
+Allow: /about
+Allow: /contact
+Allow: /register
+Allow: /login
+
+# Block private areas
+Disallow: /admin/
+Disallow: /users/dashboard
+Disallow: /users/profile
+Disallow: /api/admin/
+
+# Allow assets
+Allow: /uploads/images/
+Allow: /css/
+Allow: /js/
+
+# Sitemap location
+Sitemap: https://naweririmba.space/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
